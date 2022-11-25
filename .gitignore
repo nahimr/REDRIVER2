@@ -22,6 +22,7 @@
 *.vcxproj.filters
 *.recipe
 *.sln
+*.zip
 *.code-workspace
 .vscode/*
 .vs/*
