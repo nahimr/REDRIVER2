@@ -41,3 +41,5 @@ src_rebuild/obj/*
 src_rebuild/project_*
 src_rebuild/*.make
 src_rebuild/Makefile
+.build/build/*
+!.build/build/.gitkeep

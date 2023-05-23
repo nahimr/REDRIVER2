@@ -4,8 +4,7 @@
 	branch = dev-nzero
 [submodule ".build/dependencies/jpeg"]
 	path = .build/dependencies/jpeg
-	url = git@github.com:libjpeg-turbo/ijg.git
-	branch = main
+	url = git@github.com:LuaDist/libjpeg.git
 [submodule ".build/dependencies/SDL2"]
 	path = .build/dependencies/SDL2
 	url = git@github.com:libsdl-org/SDL.git
