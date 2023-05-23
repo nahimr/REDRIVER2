@@ -1,4 +1,0 @@
-BOOT = cdrom:\DRIVER2.EXE;1
-TCB = 4
-EVENT = 10
-STACK = 801ffff0

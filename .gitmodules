@@ -1,3 +1,4 @@
-[submodule "src_rebuild/PsyCross"]
-	path = src_rebuild/PsyCross
-	url = https://github.com/OpenDriver2/PsyCross.git
+[submodule ".build/dependencies/PsyCross"]
+	path = .build/dependencies/PsyCross
+	url = git@github.com:nahimr/PsyCross.git
+	branch = dev-nzero
