@@ -2,9 +2,6 @@
 	path = .build/dependencies/PsyCross
 	url = git@github.com:nahimr/PsyCross.git
 	branch = dev-nzero
-[submodule ".build/dependencies/jpeg"]
-	path = .build/dependencies/jpeg
-	url = git@github.com:LuaDist/libjpeg.git
 [submodule ".build/dependencies/SDL2"]
 	path = .build/dependencies/SDL2
 	url = git@github.com:libsdl-org/SDL.git
@@ -13,3 +10,6 @@
 	path = .build/dependencies/openal
 	url = git@github.com:kcat/openal-soft.git
 	branch = master
+[submodule ".build/dependencies/jpeg"]
+	path = .build/dependencies/jpeg
+	url = git@github.com:LuaDist/libjpeg.git

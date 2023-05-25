@@ -37,7 +37,7 @@ target_include_directories(PsyCross PUBLIC
             "${SDL2_SOURCE_DIR}/include"
             "${OPENAL_SOURCE_DIR}/include"
             "${JPEG_SOURCE_DIR}"
-           )
+)
 
 target_link_libraries(REDRIVER2 jpeg m dl GLESv3 EGL OpenSLES log android PsyCross "${PROJECT_DIRECTORY}/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2.so" "${PROJECT_DIRECTORY}/libs/${CMAKE_ANDROID_ARCH_ABI}/libopenal.so")
 #target_link_libraries(REDRIVER2 jpeg m dl GLESv1_CM GLESv2 OpenSLES log android PsyCross SDL2)

@@ -22,6 +22,7 @@ typedef short VERTTYPE;
 #else
 
 #if defined(_M_X64) || defined(__amd64__)
+#include "psx/libgpu.h"
 typedef OT_TAG OTTYPE;
 #else
 typedef unsigned long long OTTYPE;
