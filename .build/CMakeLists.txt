@@ -5,16 +5,17 @@ project(REDRIVER2 C CXX)
 set(REDRIVER2_PATH ../src_rebuild)
 set(GAME_REGION "NTSC_VERSION")
 
-add_subdirectory(dependencies/PsyCross)
-add_subdirectory(dependencies/jpeg)
+set(CMAKE_CXX_STANDARD 11)
 
 # Building from sources
 if(ANDROID OR EMSCRIPTEN OR IOS OR TVOS)
-	if(NOT(PSYCROSS_SUBPROJECT))
-		# Dependencies Sources
-		set(OPENAL_LIBRARY dependencies/openal)
-		set(SDL2_LIBRARY dependencies/SDL2)
-	endif()
+    if(ANDROID)
+        set(__ANDROID__ ON)
+    endif()
+
+    # Dependencies Sources
+    set(OPENAL_LIBRARY dependencies/openal)
+    set(SDL2_LIBRARY dependencies/SDL2)
 
 	if(NOT(OPENAL_LIBRARY))
 		message(FATAL_ERROR "OPENAL_LIBRARY is missing !")
@@ -47,23 +48,46 @@ else()
 	endif()
 endif()
 
+add_subdirectory(dependencies/PsyCross)
+add_subdirectory(dependencies/jpeg)
 
-add_compile_definitions(
-    BUILD_CONFIGURATION_STRING="${CMAKE_BUILD_TYPE}_${CMAKE_BUILD_TOOL}"
+#### REDRIVER 2 PROJECT ####
+
+file(GLOB_RECURSE REDRIVER2_SOURCES ${REDRIVER2_PATH}/*.c ${REDRIVER2_PATH}/*.cpp)
+set_source_files_properties(${REDRIVER2_SOURCES} PROPERTIES LANGUAGE CXX)
+
+if(ANDROID OR IOS OR TVOS)
+    add_library(REDRIVER2 ${REDRIVER2_SOURCES})
+else()
+    add_executable(REDRIVER2 ${REDRIVER2_SOURCES})
+endif()
+
+add_definitions(
+    -DBUILD_CONFIGURATION_STRING="${CMAKE_BUILD_TYPE}_${CMAKE_BUILD_TOOL}"
+    -DNTSC_VERSION=1
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_definitions(
-        _DEBUG=1
-        DEBUG_OPTIONS=1
-        COLLISION_DEBUG=1
-        CUTSCENE_RECORDER=1
+    add_definitions(
+        -D_DEBUG=1
+        -DDEBUG_OPTIONS=1
+        -DCOLLISION_DEBUG=1
+        -DCUTSCENE_RECORDER=1
     )
 endif()
 
-if (UNIX)
-    set(LD_LIBS GL)
-    add_compile_options(
+if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    add_definitions(
+        -DNDEBUG=1
+        -DDEBUG_OPTIONS=1
+        -DCOLLISION_DEBUG=1
+        -DCUTSCENE_RECORDER=1
+    )
+endif()
+
+if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
+    set(PLATFORM_LD_LIBS GL openal)
+    target_compile_options(REDRIVER2 PRIVATE
         -Wno-narrowing
         -Wno-endif-labels
         -Wno-write-strings
@@ -72,7 +96,7 @@ if (UNIX)
         -fpermissive
     )
 elseif(WIN32)
-    add_compile_options(
+    target_compile_options(REDRIVER2 PRIVATE
         -Wno-elaborated-enum-class 
         -Wno-narrowing
         -Wno-endif-labels
@@ -83,8 +107,9 @@ elseif(WIN32)
         -fpermissive
     )
 elseif(ANDROID)
-    set(LD_LIBS GLESv3 EGL OpenSLES log android)
-    add_compile_options(
+    set(PLATFORM_LD_LIBS GLESv3 EGL OpenSLES log android OpenAL)
+    target_compile_definitions(REDRIVER2 PRIVATE -D__ANDROID__=1)
+    target_compile_options(REDRIVER2 PRIVATE
         -Wno-narrowing
         -Wno-endif-labels
         -Wno-write-strings
@@ -92,16 +117,6 @@ elseif(ANDROID)
         -Wno-unused-result
         -fpermissive
     )
-endif()
-
-file(GLOB_RECURSE REDRIVER2_SOURCES ${REDRIVER2_PATH}/*.c ${REDRIVER2_PATH}/*.cpp)
-
-set_source_files_properties(${REDRIVER2_SOURCES} PROPERTIES LANGUAGE CXX)
-
-if(ANDROID)
-    add_library(REDRIVER2 ${REDRIVER2_SOURCES})
-else()
-    add_executable(REDRIVER2 ${REDRIVER2_SOURCES})
 endif()
 
 target_include_directories(REDRIVER2 PUBLIC 
@@ -113,4 +128,4 @@ target_include_directories(REDRIVER2 PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}/dependencies/jpeg
 )
 
-target_link_libraries(REDRIVER2 m PsyCross dl ${LD_LIBS} jpeg SDL2 openal)
+target_link_libraries(REDRIVER2 m PsyCross dl ${PLATFORM_LD_LIBS} jpeg SDL2)
