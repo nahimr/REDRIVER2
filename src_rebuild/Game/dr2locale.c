@@ -125,7 +125,7 @@ int InitStringLanguage(char *filename, int mission)
 	int i;
 	int size;
 	
-	FILE* fp = fopen(filename, "rb");
+	FILE* fp = PsyX_FS_OpenFile(filename, "rb");
 	if (!fp)
 	{
 		printError("ERROR! Cannot open language file '%s'!\n", filename);

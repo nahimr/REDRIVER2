@@ -751,7 +751,7 @@ void SaveReplay(int direction)
 				sprintf(EnterNameText, "Chase%d", cnt);
 				sprintf(filename, "Replays/%s.D2RP", EnterNameText);
 
-				if ((temp = fopen(filename, "r")) != NULL)
+				if ((temp = PsyX_FS_OpenFile(filename, "r")) != NULL)
 				{
 					fclose(temp);
 					cnt++;

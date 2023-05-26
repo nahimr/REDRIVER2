@@ -317,7 +317,7 @@ int g_NumSubtitles = 0;
 void InitSubtitles(const char* filename)
 {
 	g_NumSubtitles = 0;
-	FILE* subFile = fopen(filename, "rb");
+	FILE* subFile = PsyX_FS_OpenFile(filename, "rb");
 	if (subFile)
 	{
 		fread(&g_NumSubtitles, sizeof(int), 1, subFile);
@@ -335,7 +335,7 @@ void InitCredits(const char* filename)
 {
 	memset(g_CreditsLines, 0, sizeof(g_CreditsLines));
 	
-	FILE* credFile = fopen(filename, "rb");
+	FILE* credFile = PsyX_FS_OpenFile(filename, "rb");
 	if (credFile)
 	{
 		fseek(credFile, 0, SEEK_END);

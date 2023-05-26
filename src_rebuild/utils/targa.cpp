@@ -1,6 +1,7 @@
 #include "targa.h"
 #include <stdio.h>
 #include <string.h>
+#include "PsyX/PsyX_public.h"
 
 bool LoadTGAImage(const char* filename, u_char** data, int& width, int& height, int& bpp)
 {
@@ -12,7 +13,7 @@ bool LoadTGAImage(const char* filename, u_char** data, int& width, int& height, 
 	uint tempPixel;
 	u_char palette[768];
 
-	fp = fopen(filename, "rb");
+	fp = PsyX_FS_OpenFile(filename, "rb");
 	if (!fp)
 		return false;
 

@@ -722,7 +722,7 @@ int CutRec_SaveReplayToFile(char* filename)
 {
 	int size = CutRec_SaveReplayToBuffer((char*)_other_buffer);
 
-	FILE* fp = fopen(filename, "wb");
+	FILE* fp = PsyX_FS_OpenFile(filename, "wb");
 	if (fp)
 	{
 		fwrite((char*)_other_buffer, 1, size, fp);
@@ -749,7 +749,7 @@ int CutRec_SaveChase()
 	{
 		sprintf(filename, "CUT%d/CUT%d_%d.D2RP", gCutsceneAsReplay, gCutsceneAsReplay, cnt);
 
-		if ((temp = fopen(filename, "rb")) != NULL)
+		if ((temp = PsyX_FS_OpenFile(filename, "rb")) != NULL)
 		{
 			fclose(temp);
 			cnt++;

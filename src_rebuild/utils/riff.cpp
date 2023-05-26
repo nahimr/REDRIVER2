@@ -6,7 +6,7 @@ CRIFF_Parser::CRIFF_Parser(const char* szFilename)
 {
 	m_pos = 0;
 
-	m_riff = fopen(szFilename, "rb" );
+	m_riff = PsyX_FS_OpenFile(szFilename, "rb" );
 	m_riffData = NULL;
 
 	if ( !m_riff )

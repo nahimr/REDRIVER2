@@ -88,22 +88,26 @@ void ShowSavingWaitMessage(char *message, int height)
 #ifndef PSX
 void GetGameProfilePath(char* str)
 {
-	char* homepath;
+	#ifndef ___ANDROID__
+		char* homepath;
 
-	homepath = getenv(HOME_ENV); // "USERPROFILE"
+		homepath = getenv(HOME_ENV); // "USERPROFILE"
 
-	if (homepath)
-	{
-		strcpy(str, homepath);
-		strcat(str, "/.driver2");
+		if (homepath)
+		{
+			strcpy(str, homepath);
+			strcat(str, "/.driver2/");
 
-		// create Driver 2 home dir
-		_mkdir(str);
-	}
-	else
-	{
-		str[0] = 0;
-	}
+			// create Driver 2 home dir
+			_mkdir(str);
+		}
+		else
+		{
+			str[0] = 0;
+		}
+	#else
+		strcpy(str, "");
+	#endif
 }
 #endif // PSX
 
@@ -137,10 +141,10 @@ void LoadCurrentProfile(int init)
 	int fileSize;
 	
 	GetGameProfilePath(filePath);
-	strcat(filePath, "/config.dat");
+	strcat(filePath, "config.dat");
 	
 	// load config
-	FILE* fp = fopen(filePath, "rb");
+	FILE* fp = PsyX_FS_OpenFile(filePath, "rb");
 	if (fp)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -186,7 +190,7 @@ void SaveCurrentProfile(int showMessage)
 
 	GetGameProfilePath(filePath);
 
-	strcat(filePath, "/config.dat");
+	strcat(filePath, "config.dat");
 
 	if (showMessage)
 	{
@@ -201,7 +205,7 @@ void SaveCurrentProfile(int showMessage)
 	error = 1;
 
 	// load config
-	FILE* fp = fopen(filePath, "wb");
+	FILE* fp = PsyX_FS_OpenFile(filePath, "wb");
 	if (fp)
 	{
 		fwrite((char*)_other_buffer, 1, dataSize, fp);
@@ -229,12 +233,12 @@ int LoadCurrentGame()
 
 	GetGameProfilePath(filePath);
 
-	strcat(filePath, "/progress.dat");
+	strcat(filePath, "progress.dat");
 
 	SetTextColour(128, 128, 64);
 
 	// load config
-	FILE* fp = fopen(filePath, "rb");
+	FILE* fp = PsyX_FS_OpenFile(filePath, "rb");
 	if (fp)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -273,7 +277,7 @@ void SaveCurrentGame()
 
 	GetGameProfilePath(filePath);
 
-	strcat(filePath, "/progress.dat");
+	strcat(filePath, "progress.dat");
 
 	SetTextColour(128, 128, 64);
 	ShowSavingWaitMessage(G_LTXT(GTXT_SavingProgress), 0);
@@ -283,7 +287,7 @@ void SaveCurrentGame()
 		dataSize = CalcGameDataSize();
 
 	// load config
-	FILE* fp = fopen(filePath, "wb");
+	FILE* fp = PsyX_FS_OpenFile(filePath, "wb");
 	if (fp)
 	{
 		fwrite((char*)_other_buffer, 1, dataSize, fp);
@@ -300,7 +304,7 @@ char gCurrentReplayFilename[64] = { 0 };
 
 int LoadReplayFromFile(char* fileName)
 {
-	FILE* fp = fopen(fileName, "rb");
+	FILE* fp = PsyX_FS_OpenFile(fileName, "rb");
 	if (fp)
 	{
 		int replay_size = 0;
@@ -350,7 +354,7 @@ int SaveReplayToFile(char* filename)
 {
 	int size = SaveReplayToBuffer((char*)_other_buffer);
 
-	FILE* fp = fopen(filename, "wb");
+	FILE* fp = PsyX_FS_OpenFile(filename, "wb");
 	if (fp)
 	{
 		fwrite((char*)_other_buffer, 1, size, fp);

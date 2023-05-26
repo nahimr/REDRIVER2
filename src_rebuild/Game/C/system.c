@@ -265,7 +265,7 @@ int Loadfile(char* name, char* addr)
 	sprintf(namebuffer, "%s%s", gDataFolder, name);
 	FS_FixPathSlashes(namebuffer);
 
-	FILE* fptr = fopen(namebuffer, "rb");
+	FILE* fptr = PsyX_FS_OpenFile(namebuffer, "rb");
 	if (fptr)
 	{
 		fseek(fptr, 0, SEEK_END);
@@ -299,7 +299,7 @@ int FileExists(char* filename)
 	sprintf(namebuffer, "%s%s", gDataFolder, filename);
 	FS_FixPathSlashes(namebuffer);
 
-	FILE* fp = fopen(namebuffer, "rb");
+	FILE* fp = PsyX_FS_OpenFile(namebuffer, "rb");
 	if (fp)
 	{
 		fclose(fp);
@@ -347,7 +347,7 @@ int LoadfileSeg(char* name, char* addr, int offset, int loadsize)
 	sprintf(namebuffer, "%s%s", gDataFolder, name);
 	FS_FixPathSlashes(namebuffer);
 
-	FILE* fptr = fopen(namebuffer, "rb");
+	FILE* fptr = PsyX_FS_OpenFile(namebuffer, "rb");
 	if (fptr)
 	{
 		fseek(fptr, 0, SEEK_END);
@@ -542,7 +542,7 @@ int loadsectorsPC(char* addr, int sector, int nsectors)
 	strcpy(namebuffer, g_CurrentLevelFileName);
 	FS_FixPathSlashes(namebuffer);
 
-	FILE* fp = fopen(namebuffer, "rb");
+	FILE* fp = PsyX_FS_OpenFile(namebuffer, "rb");
 
 	if (fp)
 	{
@@ -914,7 +914,7 @@ void SetCityType(CITYTYPE type)
 	sprintf(filename, format, gDataFolder, LevelFiles[GameLevel]);
 	FS_FixPathSlashes(filename);
 
-	FILE* levFp = fopen(filename, "rb");
+	FILE* levFp = PsyX_FS_OpenFile(filename, "rb");
 
 	if (levFp)
 	{

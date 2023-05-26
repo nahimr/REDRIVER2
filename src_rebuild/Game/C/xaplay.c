@@ -89,7 +89,7 @@ void StoreXASubtitles()
 				sprintf(fileName, "%sXA\\XABNK0%d.XA[%d].SBN", gDataFolder, i+1, j);
 				FS_FixPathSlashes(fileName);
 
-				FILE* fp = fopen(fileName, "wb");
+				FILE* fp = PsyX_FS_OpenFile(fileName, "wb");
 
 				if (fp)
 				{
@@ -307,7 +307,7 @@ void PlayXA(int num, int index)
 		sprintf(fileName, "%sXA\\XABNK0%d.XA[%d].SBN", gDataFolder, num + 1, index);
 		FS_FixPathSlashes(fileName);
 
-		FILE* fp = fopen(fileName, "rb");
+		FILE* fp = PsyX_FS_OpenFile(fileName, "rb");
 
 		if (fp)
 		{

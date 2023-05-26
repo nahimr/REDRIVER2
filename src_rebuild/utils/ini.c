@@ -26,6 +26,7 @@
 #include <ctype.h>
 
 #include "ini.h"
+#include "PsyX/PsyX_public.h"
 
 struct ini_t {
   char *data;
@@ -186,7 +187,7 @@ ini_t* ini_load(const char *filename) {
   memset(ini, 0, sizeof(*ini));
 
   /* Open file */
-  fp = fopen(filename, "rb");
+  fp = PsyX_FS_OpenFile(filename, "rb");
   if (!fp) {
     goto fail;
   }

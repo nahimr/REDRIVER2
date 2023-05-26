@@ -2036,7 +2036,7 @@ int redriver2_main(int argc, char** argv)
 			char nameStr[512];
 			sprintf(nameStr, "%s", argv[i + 1]);
 
-			FILE* fp = fopen(nameStr, "rb");
+			FILE* fp = PsyX_FS_OpenFile(nameStr, "rb");
 			if (fp)
 			{
 				int replay_size = 0;
