@@ -119,6 +119,9 @@ elseif(ANDROID)
     )
 endif()
 
+add_compile_options(-m32)
+add_definitions(-m32)
+
 target_include_directories(REDRIVER2 PUBLIC 
     ${REDRIVER2_PATH}/Game 
     ${SDL2_INCLUDE_DIRS}
