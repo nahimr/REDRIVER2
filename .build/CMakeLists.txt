@@ -115,6 +115,7 @@ elseif(ANDROID)
         -Wno-write-strings
         -Wno-format-security
         -Wno-unused-result
+        -fsigned-char
         -fpermissive
     )
 endif()

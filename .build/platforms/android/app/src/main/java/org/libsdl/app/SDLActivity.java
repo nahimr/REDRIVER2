@@ -321,32 +321,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         return new SDLSurface(context);
     }
 
-    // private void custom_requestPermissions() {
-    //     if (VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-    //         try {
-    //             Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-    //             intent.addCategory("android.intent.category.DEFAULT");
-    //             intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-    //             startActivityForResult(intent, 2296);
-    //         } catch (Exception e) {
-    //             // Intent intent = new Intent();
-    //             // intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-    //             // startActivityForResult(intent, 2296);
-    //         }
-    //     }
-    // }
-
-
-    //  @Override
-    // protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    //     super.onActivityResult(requestCode, resultCode, data);
-    //     if (requestCode == 2296) {
-    //         if (VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-    //             Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT).show();
-    //         }
-    //     }
-    // }
-
     // Setup
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -354,9 +328,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         Log.v(TAG, "Model: " + Build.MODEL);
         Log.v(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
-
-        // requestPermission("Manifest.permission.MANAGE_EXTERNAL_STORAGE", 1313);
-        // custom_requestPermissions();
 
         try {
             Thread.currentThread().setName("SDLActivity");
