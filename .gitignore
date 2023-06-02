@@ -43,3 +43,4 @@ src_rebuild/*.make
 src_rebuild/Makefile
 .build/build/*
 !.build/build/.gitkeep
+!.build/platforms/**/libs/**/*.lib
