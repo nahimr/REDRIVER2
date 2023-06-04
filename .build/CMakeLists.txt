@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 
 project(REDRIVER2 C CXX)
 
-set(REDRIVER2_PATH ../src_rebuild)
+set(REDRIVER2_PATH ../src)
 set(GAME_REGION "NTSC_VERSION")
 
 set(CMAKE_CXX_STANDARD 11)

@@ -4,7 +4,7 @@ set -ex
 # Creating flatpak directories
 mkdir -p "${APPVEYOR_BUILD_FOLDER}/.flatpak/lib" "${APPVEYOR_BUILD_FOLDER}/.flatpak/data" "${APPVEYOR_BUILD_FOLDER}/.flatpak/bin"
 
-cd "$APPVEYOR_BUILD_FOLDER/src_rebuild"
+cd "$APPVEYOR_BUILD_FOLDER/src"
 
 ./premake5 gmake2
 
@@ -15,12 +15,12 @@ do
     make config=$config -j$(nproc)
 done
 
-find ${APPVEYOR_BUILD_FOLDER}/src_rebuild/bin -name 'REDRIVER2*' -exec cp -t ${APPVEYOR_BUILD_FOLDER}/.flatpak/bin {} +
+find ${APPVEYOR_BUILD_FOLDER}/src/bin -name 'REDRIVER2*' -exec cp -t ${APPVEYOR_BUILD_FOLDER}/.flatpak/bin {} +
 
 # Copy missing libraries in the runtime
 for lib in libjpeg libopenal libsndio libbsd
 do
-    cp -Lf $(ldd "${APPVEYOR_BUILD_FOLDER}/src_rebuild/bin/Release/REDRIVER2" | awk '/ => / { print $3 }' | grep ${lib}) "${APPVEYOR_BUILD_FOLDER}/.flatpak/lib"
+    cp -Lf $(ldd "${APPVEYOR_BUILD_FOLDER}/src/bin/Release/REDRIVER2" | awk '/ => / { print $3 }' | grep ${lib}) "${APPVEYOR_BUILD_FOLDER}/.flatpak/lib"
 done
 
 cp -r "${APPVEYOR_BUILD_FOLDER}/data" "${APPVEYOR_BUILD_FOLDER}/.flatpak/"

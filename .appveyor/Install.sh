@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-cd "$APPVEYOR_BUILD_FOLDER/src_rebuild"
+cd "$APPVEYOR_BUILD_FOLDER/src"
 
 # Download premake5
 # because it isn't in the repos (yet?)

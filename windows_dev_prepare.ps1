@@ -3,7 +3,7 @@ $windows_jpeg_url = 'http://www.ijg.org/files/jpegsr9d.zip'
 $windows_openal_url = 'https://openal-soft.org/openal-binaries/openal-soft-1.21.1-bin.zip'
 $windows_sdl2_url = 'https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip'
 
-$project_folder = '.\\src_rebuild'
+$project_folder = '.\\src'
 $dependency_folder = $project_folder + '\\dependencies'
 
 # Download required dependencies
