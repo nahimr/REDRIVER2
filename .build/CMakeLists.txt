@@ -114,10 +114,12 @@ if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
         -fpermissive
     )
 elseif(WIN32)
+    set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../src FILES ${REDRIVER2_SOURCES})
     set(PLATFORM_LD_LIBS opengl32)
     set(PLATFORM_STATIC_LIBS PsyCross)
     set(VS_STARTUP_PROJECT REDRIVER2)
-    set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
     target_compile_options(REDRIVER2 PRIVATE
         /wd4996 
         /wd4554
@@ -140,6 +142,5 @@ elseif(ANDROID)
         -fpermissive
     )
 endif()
-
 
 target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg SDL2)
