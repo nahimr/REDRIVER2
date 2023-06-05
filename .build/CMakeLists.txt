@@ -7,8 +7,16 @@ set(GAME_REGION "NTSC_VERSION")
 
 set(CMAKE_CXX_STANDARD 11)
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "This project cannot be built in 64 bits !")
+endif()
+
+set(ALSOFT_EXAMPLES OFF)
+set(ALSOFT_UTILS OFF)
+set(SDL_TESTS OFF)
+
 # Building from sources
-if(ANDROID OR EMSCRIPTEN OR IOS OR TVOS)
+if(ANDROID OR EMSCRIPTEN OR IOS OR TVOS OR WIN32)
     if(ANDROID)
         set(__ANDROID__ ON)
     endif()
@@ -85,8 +93,18 @@ if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     )
 endif()
 
+target_include_directories(REDRIVER2 PUBLIC 
+    ${REDRIVER2_PATH}/Game 
+    ${SDL2_INCLUDE_DIRS}
+    ${PsyCross_SOURCE_DIR}/include 
+    ${PsyCross_SOURCE_DIR}/include/psx
+    ${libjpeg_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/dependencies/jpeg
+)
+
 if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
     set(PLATFORM_LD_LIBS GL openal)
+    set(PLATFORM_STATIC_LIBS m PsyCross dl)
     target_compile_options(REDRIVER2 PRIVATE
         -Wno-narrowing
         -Wno-endif-labels
@@ -96,18 +114,21 @@ if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
         -fpermissive
     )
 elseif(WIN32)
+    set(PLATFORM_LD_LIBS opengl32)
+    set(PLATFORM_STATIC_LIBS PsyCross)
+    set(VS_STARTUP_PROJECT REDRIVER2)
+    set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
     target_compile_options(REDRIVER2 PRIVATE
-        -Wno-elaborated-enum-class 
-        -Wno-narrowing
-        -Wno-endif-labels
-        -Wno-write-strings
-        -Wno-format
-        -Wno-format-security
-        -Wno-unused-result
-        -fpermissive
+        /wd4996 
+        /wd4554
+        /wd4244
+        /wd4101
+        /wd4838
+        /wd4309
     )
 elseif(ANDROID)
     set(PLATFORM_LD_LIBS GLESv3 EGL OpenSLES log android OpenAL)
+    set(PLATFORM_STATIC_LIBS m PsyCross dl)
     target_compile_definitions(REDRIVER2 PRIVATE -D__ANDROID__=1)
     target_compile_options(REDRIVER2 PRIVATE
         -Wno-narrowing
@@ -120,16 +141,5 @@ elseif(ANDROID)
     )
 endif()
 
-add_compile_options(-m32)
-add_definitions(-m32)
 
-target_include_directories(REDRIVER2 PUBLIC 
-    ${REDRIVER2_PATH}/Game 
-    ${SDL2_INCLUDE_DIRS}
-    ${PsyCross_SOURCE_DIR}/include 
-    ${PsyCross_SOURCE_DIR}/include/psx
-    ${libjpeg_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/dependencies/jpeg
-)
-
-target_link_libraries(REDRIVER2 m PsyCross dl ${PLATFORM_LD_LIBS} jpeg SDL2)
+target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg SDL2)
