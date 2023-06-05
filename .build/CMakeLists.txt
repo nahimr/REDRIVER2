@@ -150,10 +150,10 @@ target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg
 ### BUILDING PACKAGES ###
 
 if (WIN32 OR UNIX)
-    set(CPACK_GENERATOR "ZIP")
     install(TARGETS REDRIVER2 RUNTIME DESTINATION .)
 
     if (WIN32)
+        set(CPACK_GENERATOR "ZIP")
         ### COPY DYNAMIC LIBRARIES TO BUILD DIRECTORIES ###
         add_custom_command (TARGET REDRIVER2 POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -168,6 +168,7 @@ if (WIN32 OR UNIX)
         install(TARGETS SDL2 RUNTIME DESTINATION .)
         install(TARGETS OpenAL RUNTIME DESTINATION .)
     else()
+        set(CPACK_GENERATOR "TGZ")
         install(TARGETS jpeg LIBRARY DESTINATION .)
     endif()
 

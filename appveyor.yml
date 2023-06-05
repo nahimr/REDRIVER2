@@ -9,23 +9,12 @@ skip_tags: true
 
 image:
 - Visual Studio 2019
-- Ubuntu2004
+- Ubuntu
 
 environment:
   data_folder: '%APPVEYOR_BUILD_FOLDER%\data'
   project_folder: '%APPVEYOR_BUILD_FOLDER%\\src'
   dependency_folder: '%APPVEYOR_BUILD_FOLDER%\dependencies'
-  # Dependency URLs
-  windows_premake_url: 'https://github.com/premake/premake-core/releases/download/v5.0.0-beta1/premake-5.0.0-beta1-windows.zip'
-  windows_jpeg_url: 'http://www.ijg.org/files/jpegsr9d.zip'
-  windows_openal_url: 'https://openal-soft.org/openal-binaries/openal-soft-1.21.1-bin.zip'
-  windows_sdl2_url: 'https://www.libsdl.org/release/SDL2-devel-2.0.20-VC.zip'
-  linux_premake_url: 'https://github.com/premake/premake-core/releases/download/v5.0.0-beta1/premake-5.0.0-beta1-linux.tar.gz'
-  # Dependency Directories
-  windows_jpeg_dir: '%dependency_folder%\jpeg-9d'
-  windows_openal_dir: '%dependency_folder%\openal-soft-1.21.1-bin'
-  windows_sdl2_dir: '%dependency_folder%\SDL2-2.0.20'
-
 
 install:
   - git submodule init
@@ -45,10 +34,10 @@ cache:
 #  - 'src\obj\'
   
 artifacts:
-  - path: src\bin\*\*.zip
+  - path: .build\build\*.zip
     name: Windows Binaries
 
-  - path: src\bin\*\*.tar.gz
+  - path: .build\build\*.tar.gz
     name: Linux Binaries
   
   - path: io.github.opendriver2.Redriver2.flatpak
