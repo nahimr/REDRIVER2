@@ -2,18 +2,20 @@ cmake_minimum_required(VERSION 3.6)
 
 project(REDRIVER2 C CXX)
 
+option(GAME_REGION "Select region (NTSC_VERSION or PAL_VERSION). Default: NTSC_VERSION" "NTSC_VERSION")
+
 set(REDRIVER2_PATH ../src)
-set(GAME_REGION "NTSC_VERSION")
-
 set(CMAKE_CXX_STANDARD 11)
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    message(FATAL_ERROR "This project cannot be built in 64 bits !")
-endif()
-
 set(ALSOFT_EXAMPLES OFF)
 set(ALSOFT_UTILS OFF)
 set(SDL_TESTS OFF)
+set(SDL_TEST OFF)
+set(SDL_STATIC OFF)
+set(SDL2_DISABLE_SDL2MAIN ON)
+
+if(NOT(CMAKE_BUILD_TYPE))
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 # Building from sources
 if(ANDROID OR EMSCRIPTEN OR IOS OR TVOS OR WIN32)
@@ -38,11 +40,11 @@ if(ANDROID OR EMSCRIPTEN OR IOS OR TVOS OR WIN32)
 	set(SDL2_INCLUDE_DIR ${SDL2_LIBRARY}/include)
 
 	# Build SDL2 from source
-	add_subdirectory(${SDL2_LIBRARY})
+	add_subdirectory(${SDL2_LIBRARY} EXCLUDE_FROM_ALL)
 	include_directories(${SDL2_INCLUDE_DIR})
 
 	# Build OpenAL from source
-	add_subdirectory(${OPENAL_LIBRARY})
+	add_subdirectory(${OPENAL_LIBRARY} EXCLUDE_FROM_ALL)
 	include_directories(${OPENAL_INCLUDE_DIR})
 else()
 	find_package(SDL2 REQUIRED)
@@ -57,7 +59,7 @@ else()
 endif()
 
 add_subdirectory(dependencies/PsyCross)
-add_subdirectory(dependencies/jpeg)
+add_subdirectory(dependencies/jpeg EXCLUDE_FROM_ALL)
 
 #### REDRIVER 2 PROJECT ####
 
@@ -70,13 +72,13 @@ else()
     add_executable(REDRIVER2 ${REDRIVER2_SOURCES})
 endif()
 
-add_definitions(
-    -DBUILD_CONFIGURATION_STRING="${CMAKE_BUILD_TYPE}_${CMAKE_BUILD_TOOL}"
+target_compile_definitions(REDRIVER2 PUBLIC
+    -DBUILD_CONFIGURATION_STRING="${CMAKE_BUILD_TYPE}"
     -DNTSC_VERSION=1
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(
+    target_compile_definitions(REDRIVER2 PUBLIC
         -D_DEBUG=1
         -DDEBUG_OPTIONS=1
         -DCOLLISION_DEBUG=1
@@ -85,7 +87,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    add_definitions(
+    target_compile_definitions(REDRIVER2 PUBLIC
         -DNDEBUG=1
         -DDEBUG_OPTIONS=1
         -DCOLLISION_DEBUG=1
@@ -143,20 +145,42 @@ elseif(ANDROID)
     )
 endif()
 
-### COPY DYNAMIC LIBRARIES TO BUILD DIRECTORIES ###
+target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg SDL2)
+
+### BUILDING PACKAGES ###
 
 if (WIN32 OR UNIX)
+    set(CPACK_GENERATOR "ZIP")
+    install(TARGETS REDRIVER2 RUNTIME DESTINATION .)
 
-    add_custom_command (TARGET REDRIVER2 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL2> $<TARGET_FILE_DIR:REDRIVER2>
+    if (WIN32)
+        ### COPY DYNAMIC LIBRARIES TO BUILD DIRECTORIES ###
+        add_custom_command (TARGET REDRIVER2 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL2> $<TARGET_FILE_DIR:REDRIVER2>
+        )
+
+        add_custom_command (TARGET REDRIVER2 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:OpenAL> $<TARGET_FILE_DIR:REDRIVER2>
+        )
+
+        install(TARGETS SDL2 RUNTIME DESTINATION .)
+        install(TARGETS OpenAL RUNTIME DESTINATION .)
+    else()
+        install(TARGETS jpeg LIBRARY DESTINATION .)
+    endif()
+
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../data/ DESTINATION .)
+
+    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${CMAKE_HOST_SYSTEM_NAME}_${CMAKE_BUILD_TYPE}")
+    set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+    set(CPACK_SOURCE_IGNORE_FILES
+      \\.git/
+      build/
+      ".*~$"
+      .gitignore
     )
-
-    add_custom_command (TARGET REDRIVER2 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:OpenAL> $<TARGET_FILE_DIR:REDRIVER2>
-    )
-
+    
+    include(CPack)
 endif()
-
-target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg SDL2)
