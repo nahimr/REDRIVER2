@@ -185,7 +185,7 @@ if (WIN32 OR UNIX)
     set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${CMAKE_HOST_SYSTEM_NAME}_${CMAKE_BUILD_TYPE}")
     set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
     set(CPACK_SOURCE_IGNORE_FILES
-      \\.git/
+      .git/
       build/
       ".*~$"
       .gitignore
