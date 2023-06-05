@@ -12,6 +12,7 @@ set(SDL_TESTS OFF)
 set(SDL_TEST OFF)
 set(SDL_STATIC OFF)
 set(SDL2_DISABLE_SDL2MAIN ON)
+set(EXTRA_SOURCES)
 
 if(NOT(CMAKE_BUILD_TYPE))
     set(CMAKE_BUILD_TYPE "Release")
@@ -66,10 +67,17 @@ add_subdirectory(dependencies/jpeg EXCLUDE_FROM_ALL)
 file(GLOB_RECURSE REDRIVER2_SOURCES ${REDRIVER2_PATH}/*.c ${REDRIVER2_PATH}/*.cpp)
 set_source_files_properties(${REDRIVER2_SOURCES} PROPERTIES LANGUAGE CXX)
 
+## Add resource file ##
+if(WIN32)
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/Resource.rc LANGUAGE RC)
+    list(APPEND EXTRA_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/Resource.rc)
+    source_group(Resources ${EXTRA_SOURCES})
+endif()
+
 if(ANDROID OR IOS OR TVOS)
     add_library(REDRIVER2 ${REDRIVER2_SOURCES})
 else()
-    add_executable(REDRIVER2 ${REDRIVER2_SOURCES})
+    add_executable(REDRIVER2 ${REDRIVER2_SOURCES} ${EXTRA_SOURCES})
 endif()
 
 target_compile_definitions(REDRIVER2 PUBLIC
@@ -177,7 +185,7 @@ if (WIN32 OR UNIX)
     set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${CMAKE_HOST_SYSTEM_NAME}_${CMAKE_BUILD_TYPE}")
     set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
     set(CPACK_SOURCE_IGNORE_FILES
-      \\.git/
+      .git/
       build/
       ".*~$"
       .gitignore
