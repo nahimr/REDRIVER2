@@ -10,6 +10,7 @@ for config in Release Debug RelWithDebInfo
 do
     cmake .. -DCMAKE_BUILD_TYPE=$config
     make -j$(nproc)
+    make package
 done
 
 # cp -r "${APPVEYOR_BUILD_FOLDER}/data" "${APPVEYOR_BUILD_FOLDER}/.flatpak/"
