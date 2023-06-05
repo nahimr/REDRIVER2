@@ -1,15 +1,15 @@
 [submodule ".build/dependencies/PsyCross"]
 	path = .build/dependencies/PsyCross
-	url = git@github.com:nahimr/PsyCross.git
+	url = https://github.com/nahimr/PsyCross.git
 	branch = dev-nzero
 [submodule ".build/dependencies/SDL2"]
 	path = .build/dependencies/SDL2
-	url = git@github.com:libsdl-org/SDL.git
+	url = https://github.com/libsdl-org/SDL.git
 	branch = SDL2
 [submodule ".build/dependencies/openal"]
 	path = .build/dependencies/openal
-	url = git@github.com:kcat/openal-soft.git
+	url = https://github.com/kcat/openal-soft.git
 	branch = master
 [submodule ".build/dependencies/jpeg"]
 	path = .build/dependencies/jpeg
-	url = git@github.com:LuaDist/libjpeg.git
+	url = https://github.com/LuaDist/libjpeg.git
