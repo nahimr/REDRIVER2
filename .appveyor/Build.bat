@@ -1,20 +1,12 @@
 @echo off
 
-cd %project_folder%
+cd %project_folder%\.build\build
 
-ren "%windows_jpeg_dir%\jconfig.vc" "jconfig.h"
+cmake .. -DBUILD_STATIC=ON -G "Visual Studio 17 2022" -A Win32
 
-set JPEG_DIR=%windows_jpeg_dir%
-set OPENAL_DIR=%windows_openal_dir%
-set SDL2_DIR=%windows_sdl2_dir%
-
-premake5 vs2019
-
-cd project_vs2019_windows
-
-set config=Debug:Release:Release_dev
+set config=Release:Debug:RelWithDebInfo
 for %%c in (%config::= %) do (
-    msbuild .\REDRIVER2.sln /p:Configuration="%%c" /p:Platform=Win32 /m ^
+    msbuild .\PACKAGE.vcxproj /p:Configuration="%%c" /p:Platform=Win32 /m ^
         /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" ^
         /nologo /ConsoleLoggerParameters:NoSummary;Verbosity=quiet
 )
