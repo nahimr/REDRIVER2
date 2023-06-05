@@ -143,4 +143,20 @@ elseif(ANDROID)
     )
 endif()
 
+### COPY DYNAMIC LIBRARIES TO BUILD DIRECTORIES ###
+
+if (WIN32 OR UNIX)
+
+    add_custom_command (TARGET REDRIVER2 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:SDL2> $<TARGET_FILE_DIR:REDRIVER2>
+    )
+
+    add_custom_command (TARGET REDRIVER2 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:OpenAL> $<TARGET_FILE_DIR:REDRIVER2>
+    )
+
+endif()
+
 target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg SDL2)
