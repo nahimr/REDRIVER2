@@ -9,7 +9,7 @@ skip_tags: true
 
 image:
 - Visual Studio 2019
-- Ubuntu
+- Ubuntu2004
 
 environment:
   data_folder: '%APPVEYOR_BUILD_FOLDER%\data'

@@ -4,15 +4,15 @@ set -ex
 cd "$APPVEYOR_BUILD_FOLDER/src"
 
 sudo apt-get update -qq -y
-sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib cmake libsdl2-dev libsdl2-2.0-0
-sudo apt-get install -qq aptitude -y
+sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib cmake libsdl2-dev libopenal-dev
+# sudo apt-get install -qq aptitude -y
 
 # fix Ubuntu's broken mess of packages using aptitude
-sudo aptitude install --quiet=2 \
-    libsdl2-dev:i386 \
-    libopenal-dev:i386 \
-    libjpeg-turbo8-dev:i386 \
-    flatpak flatpak-builder -y
+# sudo aptitude install --quiet=2 \
+#     libsdl2-dev:i386 \
+#     libopenal-dev:i386 \
+#     libjpeg-turbo8-dev:i386 \
+#     flatpak flatpak-builder -y
 
 # # Setting XDG_DATA_DIRS environement variable for flatpak
 # export XDG_DATA_DIRS="/var/lib/flatpak/exports/share:${HOME}/.local/share/flatpak/exports/share:$XDG_DATA_DIRS"
