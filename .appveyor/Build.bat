@@ -1,6 +1,6 @@
 @echo off
 
-cd %project_folder%\.build\build
+cd %APPVEYOR_BUILD_FOLDER%\.build\build
 
 cmake .. -DBUILD_STATIC=ON -G "Visual Studio 17 2022" -A Win32
 
