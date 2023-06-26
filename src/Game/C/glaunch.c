@@ -18,6 +18,10 @@
 
 #include "Frontend/FEmain.h"
 
+#ifdef DISCORD_SUPPORT
+#include "../utils/discord.h"
+#endif
+
 struct MISSION_STEP
 {
 	u_char flags : 3;
@@ -279,6 +283,10 @@ void State_GameStart(void* param)
 		
 			break;
 	}
+
+#ifdef DISCORD_SUPPORT
+	DiscordSetActivity((EDriverActivity)GameType, (EDriverCity)GameLevel, gCurrentMissionNumber);
+#endif
 }
 
 void State_InitFrontEnd(void* param)
@@ -679,6 +687,10 @@ void State_GameComplete(void* param)
 	// set to 60 FPS VSync
 	PsyX_SetSwapInterval(1);
 	PsyX_EnableSwapInterval(1);
+#endif
+
+#ifdef DISCORD_SUPPORT
+	DiscordSetActivity((EDriverActivity)GameType, (EDriverCity)GameLevel, gCurrentMissionNumber);
 #endif
 }
 
