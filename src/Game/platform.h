@@ -16,4 +16,8 @@
 #define _stricmp(s1, s2) strcasecmp(s1, s2)
 #endif
 
+#ifdef WIN32
+#define DISCORD_SUPPORT 1
+#endif
+
 #endif // PLATFORM_H

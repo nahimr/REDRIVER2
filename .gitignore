@@ -43,3 +43,6 @@ src/*.make
 src/Makefile
 .build/build/*
 !.build/build/.gitkeep
+*.wav
+jpsxdec.ini
+*.dmp

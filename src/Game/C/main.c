@@ -61,58 +61,78 @@
 #include "cutrecorder.h"
 
 int levelstartpos[8][4] = {
-	{ 4785, -1024, -223340, 0},
-	{ -223276, 2048, -235167, 0},
-	{ 230347, -1024, 704030, 0},
-	{ 91631, -1024, -347175, 0},
+	{4785, -1024, -223340, 0},
+	{-223276, 2048, -235167, 0},
+	{230347, -1024, 704030, 0},
+	{91631, -1024, -347175, 0},
 
 	// what?
-	{ 148808, 6163, -112000, 0},
-	{ -170000, 6163, 361000, 0},
-	{ -10500, -6163, -22144, 0},
-	{ -8995, -6163, 63655, 0},
+	{148808, 6163, -112000, 0},
+	{-170000, 6163, 361000, 0},
+	{-10500, -6163, -22144, 0},
+	{-8995, -6163, 63655, 0},
 };
 
-XZPAIR gStartPos = { 0 };
+XZPAIR gStartPos = {0};
 
 enum LevLumpType
 {
 	// known lumps indexes
-	LUMP_MODELS = 1,			// level models
-	LUMP_MAP = 2,				// map info
+	LUMP_MODELS = 1,
+	// level models
+	LUMP_MAP = 2,
+	// map info
 
-	LUMP_TEXTURENAMES = 5,		// texture name strings
+	LUMP_TEXTURENAMES = 5,
+	// texture name strings
 
-	LUMP_ROADMAP = 7,			// unused lump in Driver 2
-	LUMP_ROADS = 8,				// unused lump in Driver 2
-	LUMP_JUNCTIONS = 9,			// unused lump in Driver 2
-	LUMP_ROADSURF = 10,			// unused lump in Driver 2
+	LUMP_ROADMAP = 7,
+	// unused lump in Driver 2
+	LUMP_ROADS = 8,
+	// unused lump in Driver 2
+	LUMP_JUNCTIONS = 9,
+	// unused lump in Driver 2
+	LUMP_ROADSURF = 10,
+	// unused lump in Driver 2
 
-	LUMP_MODELNAMES = 12,		// model name strings
+	LUMP_MODELNAMES = 12,
+	// model name strings
 
-	LUMP_ROADBOUNDS = 16,		// unused lump in Driver 2
-	LUMP_JUNCBOUNDS = 17,		// unused lump in Driver 2
+	LUMP_ROADBOUNDS = 16,
+	// unused lump in Driver 2
+	LUMP_JUNCBOUNDS = 17,
+	// unused lump in Driver 2
 
 	LUMP_SUBDIVISION = 20,
-	LUMP_LOWDETAILTABLE = 21,	// LOD tables for models
-	LUMP_MOTIONCAPTURE = 22,	// motion capture/animation data for peds and Tanner
-	LUMP_OVERLAYMAP = 24,		// overlay map
-	LUMP_PALLET = 25,			// car palettes
-	LUMP_SPOOLINFO = 26,		// level region spooling
-	LUMP_CAR_MODELS = 28,		// car models
+	LUMP_LOWDETAILTABLE = 21,
+	// LOD tables for models
+	LUMP_MOTIONCAPTURE = 22,
+	// motion capture/animation data for peds and Tanner
+	LUMP_OVERLAYMAP = 24,
+	// overlay map
+	LUMP_PALLET = 25,
+	// car palettes
+	LUMP_SPOOLINFO = 26,
+	// level region spooling
+	LUMP_CAR_MODELS = 28,
+	// car models
 
 	LUMP_CHAIR = 33,
-	LUMP_TEXTUREINFO = 34,		// texture page info and details (atlases)
+	LUMP_TEXTUREINFO = 34,
+	// texture page info and details (atlases)
 
 	LUMP_LEVELDESC = 35,
 	LUMP_LEVELDATA = 36,
 	LUMP_LUMPDESC = 37,
 
-	LUMP_STRAIGHTS2 = 40,		// road straights (AI)
+	LUMP_STRAIGHTS2 = 40,
+	// road straights (AI)
 	LUMP_CURVES2 = 41,
 
-	LUMP_JUNCTIONS2 = 42,		// previously LUMP_JUNCTIONS2
-	LUMP_JUNCTIONS2_NEW = 43,	// Only appear in release Driver2
+	LUMP_JUNCTIONS2 = 42,
+	// previously LUMP_JUNCTIONS2
+	LUMP_JUNCTIONS2_NEW = 43,
+	// Only appear in release Driver2
 };
 
 int gStopPadReads = 0;
@@ -131,7 +151,7 @@ int FrameCnt = 0;
 static int WantPause = 0;
 static PAUSEMODE PauseMode = PAUSEMODE_PAUSE;
 
-u_char defaultPlayerModel[2] = { 0 }; // offset 0xAA604
+u_char defaultPlayerModel[2] = {0}; // offset 0xAA604
 u_char defaultPlayerPalette = 0; // offset 0xAA606
 
 u_int* transparent_buffer;
@@ -190,7 +210,8 @@ void ProcessLumps(char* lump_ptr, int lump_size)
 	int numLumps = -1;
 
 	quit = 0;
-	do {
+	do
+	{
 		lump_type = *(int*)lump_ptr;
 		seg_size = *(int*)(lump_ptr + 4);
 		ptr = (int*)(lump_ptr + 8);
@@ -315,7 +336,7 @@ void ProcessLumps(char* lump_ptr, int lump_size)
 			printInfo("LUMP_MODELS: size: %d\n", seg_size);
 			ProcessMDSLump((char*)ptr, seg_size);
 			ProcessCarModelLump(car_models_lump, 0);
-			
+
 			InitModelNames();
 
 			SetUpEvents(1);
@@ -373,7 +394,8 @@ void ProcessLumps(char* lump_ptr, int lump_size)
 			return;
 
 		numLumps--;
-	} while (numLumps != 0);
+	}
+	while (numLumps != 0);
 }
 
 // [D] [T]
@@ -412,7 +434,7 @@ void LoadGameLevel(void)
 
 	// CITYLUMP_DATA1 - load-time lump
 	ProcessLumps((char*)_primTab1 + 8, nsectors * CDSECTOR_SIZE);
-	
+
 	// CITYLUMP_TPAGE is right next after DATA1
 	LoadPermanentTPages(&sector);
 
@@ -420,15 +442,15 @@ void LoadGameLevel(void)
 	nsectors = citylumps[GameLevel][CITYLUMP_DATA2].y / CDSECTOR_SIZE;
 
 	D_MALLOC_BEGIN();
-	malloc_lump = D_MALLOC(nsectors * CDSECTOR_SIZE);
-	D_MALLOC_END();
+		malloc_lump = D_MALLOC(nsectors * CDSECTOR_SIZE);
+		D_MALLOC_END();
 
 	loadsectors(malloc_lump, sector, nsectors);
 
 	sector += nsectors;
-	
+
 	// CITYLUMP_DATA2 - in-memory lump
-	ProcessLumps(malloc_lump + 8, (nsectors * CDSECTOR_SIZE));	
+	ProcessLumps(malloc_lump + 8, (nsectors * CDSECTOR_SIZE));
 
 	SpoolLumpOffset = citylumps[GameLevel][CITYLUMP_SPOOL].x;
 
@@ -436,7 +458,7 @@ void LoadGameLevel(void)
 	InitDebrisNames();
 	InitShadow();
 	//InitTextureNames();			// [A] I know that this is obsolete and used NOWHERE
-	
+
 #if USE_PC_FILESYSTEM
 	extern int gContentOverride;
 
@@ -446,7 +468,7 @@ void LoadGameLevel(void)
 		LoadPermanentTPagesFromTIM();
 	}
 #endif
-	
+
 	ReportMode(1);
 }
 
@@ -463,13 +485,13 @@ void State_GameInit(void* param)
 		sys_freeall();
 		malloctab = D_MALLOC(0x200000);
 #endif // USE_CRT_MALLOC
-		
+
 		mallocptr = (char*)malloctab;
 
 		// 4 regions, 1024 packed cell pointers
 		D_MALLOC_BEGIN();
-		packed_cell_pointers = D_MALLOC(1024 * 4);
-		D_MALLOC_END();
+			packed_cell_pointers = D_MALLOC(1024 * 4);
+			D_MALLOC_END();
 	}
 	else
 	{
@@ -538,7 +560,7 @@ void State_GameInit(void* param)
 	{
 		if (GameType == GAME_TAKEADRIVE)
 		{
-			if(GameLevel == 0)
+			if (GameLevel == 0)
 				musicType = 0 + (gCurrentMissionNumber & 1);
 			else if (GameLevel == 1)
 				musicType = 5 + (gCurrentMissionNumber & 1);
@@ -552,36 +574,36 @@ void State_GameInit(void* param)
 			musicType = gCurrentMissionNumber % 8;
 		}
 	}
-	else 
+	else
 #endif
-	if (GameLevel == 1)
-	{
-		musicType = 1;
+		if (GameLevel == 1)
+		{
+			musicType = 1;
 
-		if ((gCurrentMissionNumber & 1U) != 0)
-			musicType = 5;
-	}
-	else if (GameLevel == 0)
-	{
-		musicType = 2;
+			if ((gCurrentMissionNumber & 1U) != 0)
+				musicType = 5;
+		}
+		else if (GameLevel == 0)
+		{
+			musicType = 2;
 
-		if ((gCurrentMissionNumber & 1U) != 0)
-			musicType = 6;
-	}
-	else if (GameLevel == 2)
-	{
-		musicType = 0;
+			if ((gCurrentMissionNumber & 1U) != 0)
+				musicType = 6;
+		}
+		else if (GameLevel == 2)
+		{
+			musicType = 0;
 
-		if ((gCurrentMissionNumber & 1U) == 0)
-			musicType = 3;
-	}
-	else if (GameLevel == 3)
-	{
-		musicType = 4;
+			if ((gCurrentMissionNumber & 1U) == 0)
+				musicType = 3;
+		}
+		else if (GameLevel == 3)
+		{
+			musicType = 4;
 
-		if ((gCurrentMissionNumber & 1U) != 0)
-			musicType = 7;
-	}
+			if ((gCurrentMissionNumber & 1U) != 0)
+				musicType = 7;
+		}
 
 	InitMusic(musicType);
 
@@ -619,7 +641,8 @@ void State_GameInit(void* param)
 	InitMap();
 	InitSpecSpool();
 
-	if ((NewLevel == 0 || gCarCleanModelPtr[4] == NULL) && allowSpecSpooling == 1) // [A] to load even more secret truck from Chicago
+	if ((NewLevel == 0 || gCarCleanModelPtr[4] == NULL) && allowSpecSpooling == 1)
+	// [A] to load even more secret truck from Chicago
 	{
 		QuickSpoolSpecial();
 	}
@@ -643,7 +666,8 @@ void State_GameInit(void* param)
 		if (i < NumPlayers)
 			padid = i;
 
-		InitPlayer(&player[i], &car_data[i], plStart->controlType, plStart->rotation, (LONGVECTOR4 *)&plStart->position, plStart->model, plStart->palette, &padid);
+		InitPlayer(&player[i], &car_data[i], plStart->controlType, plStart->rotation, (LONGVECTOR4*)&plStart->position,
+		           plStart->model, plStart->palette, &padid);
 
 		if (!(plStart->type == 2))
 		{
@@ -696,14 +720,14 @@ void State_GameInit(void* param)
 
 	if (gWeather == 1)
 		wetness = 7000;
-	//else if (gWeather == 2)	// [A] addition that I have disabled
-	//	wetness = 3000;
+		//else if (gWeather == 2)	// [A] addition that I have disabled
+		//	wetness = 3000;
 	else
 		wetness = 0;
 
 	if (gTimeOfDay == 2)
 	{
-		for ( i = 0; i < MAX_CARS; i++)
+		for (i = 0; i < MAX_CARS; i++)
 			lightsOnDelay[i] = (i * 11);
 	}
 
@@ -737,18 +761,18 @@ void State_GameInit(void* param)
 
 	switch (gCurrentMissionNumber)
 	{
-		case 2:
-		case 3:
-		case 6:
-		case 11:
-		case 13:
-		case 14:
-		case 19:
-		case 26:
-		case 28:
-		case 34:
-		case 38:
-			FunkUpDaBGMTunez(1);
+	case 2:
+	case 3:
+	case 6:
+	case 11:
+	case 13:
+	case 14:
+	case 19:
+	case 26:
+	case 28:
+	case 34:
+	case 38:
+		FunkUpDaBGMTunez(1);
 	}
 
 	xa_timeout = 0;
@@ -796,7 +820,7 @@ void State_GameInit(void* param)
 		ReadControllers();
 		VSync(0);
 	}
-	
+
 #ifdef PSX
 	inittimer(120);
 	Clock_SystemStartUp();
@@ -825,7 +849,7 @@ char CameraChanged = 0;
 char CamerasSaved = 0;
 char paused = 0;
 
-char gRightWayUp = 0;	// cheat
+char gRightWayUp = 0; // cheat
 
 int num_active_cars = 0;
 u_int lead_pad = 0;
@@ -992,69 +1016,69 @@ void StepSim(void)
 	{
 		switch (cp->controlType)
 		{
-			case CONTROL_TYPE_PLAYER:
-				t0 = Pads[*cp->ai.padid].mapped;	// [A] padid might be wrong
-				t1 = Pads[*cp->ai.padid].mapanalog[2];
-				t2 = Pads[*cp->ai.padid].type & 4;
+		case CONTROL_TYPE_PLAYER:
+			t0 = Pads[*cp->ai.padid].mapped; // [A] padid might be wrong
+			t1 = Pads[*cp->ai.padid].mapanalog[2];
+			t2 = Pads[*cp->ai.padid].type & 4;
 
-				// [A] handle REDRIVER2 dedicated car exit button
-				if(t0 & CAR_PAD_LEAVECAR_DED)
+		// [A] handle REDRIVER2 dedicated car exit button
+			if (t0 & CAR_PAD_LEAVECAR_DED)
+			{
+				t0 &= ~CAR_PAD_LEAVECAR_DED;
+				t0 |= CAR_PAD_LEAVECAR;
+			}
+
+			if (NoPlayerControl == 0)
+			{
+				if (gStopPadReads)
 				{
-					t0 &= ~CAR_PAD_LEAVECAR_DED;
-					t0 |= CAR_PAD_LEAVECAR;
+					t0 = CAR_PAD_BRAKE;
+
+					if (cp->hd.wheel_speed <= 0x9000)
+						t0 = CAR_PAD_HANDBRAKE;
+
+					t1 = 0;
+					t2 = 1;
 				}
 
-				if (NoPlayerControl == 0)
-				{
-					if (gStopPadReads)
-					{
-						t0 = CAR_PAD_BRAKE;
+				cjpRecord(*cp->ai.padid, &t0, &t1, &t2);
+			}
+			else
+			{
+				cjpPlay(*cp->ai.padid, &t0, &t1, &t2);
+			}
 
-						if (cp->hd.wheel_speed <= 0x9000)
-							t0 = CAR_PAD_HANDBRAKE;
+			ProcessCarPad(cp, t0, t1, t2);
+			break;
+		case CONTROL_TYPE_CIV_AI:
+			CivControl(cp);
+			break;
+		case CONTROL_TYPE_PURSUER_AI:
+			CopControl(cp);
+			break;
+		case CONTROL_TYPE_LEAD_AI:
+			t2 = 0;
+			t1 = 0;
+			t0 = 0;
 
-						t1 = 0;
-						t2 = 1;
-					}
+			t0 = FreeRoamer(cp);
 
-					cjpRecord(*cp->ai.padid, &t0, &t1, &t2);
-				}
-				else
-				{
-					cjpPlay(*cp->ai.padid, &t0, &t1, &t2);
-				}
-
+			if (t0 == 0)
+			{
+				cp->handbrake = 1;
+				cp->wheel_angle = 0;
+			}
+			else
+			{
 				ProcessCarPad(cp, t0, t1, t2);
-				break;
-			case CONTROL_TYPE_CIV_AI:
-				CivControl(cp);
-				break;
-			case CONTROL_TYPE_PURSUER_AI:
-				CopControl(cp);
-				break;
-			case CONTROL_TYPE_LEAD_AI:
-				t2 = 0;
-				t1 = 0;
-				t0 = 0;
+			}
 
-				t0 = FreeRoamer(cp);
+			break;
+		case CONTROL_TYPE_CUTSCENE:
+			if (!_CutRec_RecordCarPad(cp, &t0, &t1, &t2))
+				cjpPlay(-*cp->ai.padid, &t0, &t1, &t2);
 
-				if (t0 == 0)
-				{
-					cp->handbrake = 1;
-					cp->wheel_angle = 0;
-				}
-				else
-				{
-					ProcessCarPad(cp, t0, t1, t2);
-				}
-
-				break;
-			case CONTROL_TYPE_CUTSCENE:
-				if (!_CutRec_RecordCarPad(cp, &t0, &t1, &t2))
-					cjpPlay(-*cp->ai.padid, &t0, &t1, &t2);
-			
-				ProcessCarPad(cp, t0, t1, t2);
+			ProcessCarPad(cp, t0, t1, t2);
 		}
 
 		StepCarPhysics(cp);
@@ -1086,7 +1110,7 @@ void StepSim(void)
 			// walk back
 			if (padAcc < -64)
 			{
-				if(padAcc < -100)
+				if (padAcc < -100)
 					Pads[stream].mapped |= 0x1000;
 				else
 					Pads[stream].mapped |= 0x1008;
@@ -1129,14 +1153,15 @@ void StepSim(void)
 		ProcessTannerPad(pl->pPed, t0, t1, t2);
 	}
 
-	if (requestStationaryCivCar == 1 && (numCivCars < maxCivCars || (PingOutCar(&car_data[furthestCivID]), numCivCars < maxCivCars)))
+	if (requestStationaryCivCar == 1 && (numCivCars < maxCivCars || (PingOutCar(&car_data[furthestCivID]), numCivCars <
+		maxCivCars)))
 	{
 		requestStationaryCivCar = 0;
 	}
 
 	if (!game_over)
 	{
-		if(pathAILoaded)
+		if (pathAILoaded)
 			ControlCops();
 
 		if (gLoadedMotionCapture)
@@ -1182,12 +1207,12 @@ void StepSim(void)
 
 				if (SpuGetKeyStatus(spuKeys) == 0)
 				{
-					if (CarHasSiren(car_data[pl->playerCarId].ap.model) == 0 && pl->pPed == NULL && pl->horn.request == 0)
+					if (CarHasSiren(car_data[pl->playerCarId].ap.model) == 0 && pl->pPed == NULL && pl->horn.request ==
+						0)
 						pl->horn.request = 1;
 
 					pl->horn.time = 11;
 				}
-
 			}
 
 			DealWithHorn(&pl->horn.request, i);
@@ -1223,7 +1248,7 @@ void StepSim(void)
 
 	for (i = 0; i < 3; i++)
 	{
-		for (j = i+1; j < 4; j++)
+		for (j = i + 1; j < 4; j++)
 		{
 			if (stupid_logic[i] == stupid_logic[j])
 				stupid_logic[j] = -1;
@@ -1236,7 +1261,7 @@ void StepSim(void)
 		{
 			CheckCarEffects(&car_data[stupid_logic[car]], i);
 			SwirlLeaves(&car_data[stupid_logic[car]]);
-			
+
 			i++;
 		}
 	}
@@ -1428,7 +1453,7 @@ void StepGame(void)
 			else
 				EnablePause(PAUSEMODE_PAUSE);
 		}
-		else if(quick_replay && !paused)
+		else if (quick_replay && !paused)
 		{
 			WantPause = 1;
 			PauseMode = PAUSEMODE_GAMEOVER;
@@ -1488,7 +1513,8 @@ void CheckForPause(void)
 		{
 			if (NumPlayers == 1)
 			{
-				if (paddp == MPAD_START && bMissionTitleFade == 0) // [A] && gInGameCutsceneActive == 0)		// allow pausing during cutscene
+				if (paddp == MPAD_START && bMissionTitleFade == 0)
+				// [A] && gInGameCutsceneActive == 0)		// allow pausing during cutscene
 				{
 					EnablePause(PAUSEMODE_PAUSE);
 				}
@@ -1503,7 +1529,7 @@ void CheckForPause(void)
 			}
 		}
 	}
-	
+
 	if (WantPause)
 	{
 		WantPause = 0;
@@ -1603,7 +1629,7 @@ void State_GameLoop(void* param)
 
 	_CutRec_Draw();
 	DrawGame();
-	
+
 	if (game_over)
 		SetState(STATE_GAMECOMPLETE);
 
@@ -1625,7 +1651,7 @@ void DrawGame(void)
 		RenderGame2(0);
 
 		ObjectDrawnCounter++;
-		
+
 		SwapDrawBuffers();
 	}
 	else
@@ -1637,9 +1663,9 @@ void DrawGame(void)
 		SwapDrawBuffers2(0);
 
 		ObjectDrawnValue += 16;
-		
+
 		DrawPauseMenus();
-		
+
 		RenderGame2(1);
 		ObjectDrawnCounter++;
 
@@ -1714,6 +1740,7 @@ void SsSetSerialVol(short s_num, short voll, short volr)
 
 #if !defined(PSX) && !defined(__EMSCRIPTEN__)
 #include <SDL_messagebox.h>
+
 void PrintCommandLineArguments()
 {
 	const char* argumentsMessage =
@@ -1772,22 +1799,25 @@ int redriver2_main(int argc, char** argv)
 #endif // PSX
 {
 	char** ScreenNames;
-	
-	char* PALScreenNames[4] = {		// [A] don't show publisher logo
-	//	"GFX\\SPLASH2.TIM",
-	//	"GFX\\SPLASH3.TIM",
+
+	char* PALScreenNames[4] = {
+		// [A] don't show publisher logo
+		//	"GFX\\SPLASH2.TIM",
+		//	"GFX\\SPLASH3.TIM",
 		"GFX\\SPLASH1P.TIM",
 		NULL
 	};
 
-	char* NTSCScreenNames[4] = {		// [A] don't show publisher logo
-	//	"GFX\\SPLASH2.TIM",
+	char* NTSCScreenNames[4] = {
+		// [A] don't show publisher logo
+		//	"GFX\\SPLASH2.TIM",
 		//"GFX\\SPLASH3.TIM",
 		"GFX\\SPLASH1N.TIM",
 		NULL
 	};
 
-	char* OPMScreenNames[4] = {		// [A] don't show publisher logo
+	char* OPMScreenNames[4] = {
+		// [A] don't show publisher logo
 		//"GFX\\OPM1.TIM",
 		"GFX\\OPM2.TIM",
 		"GFX\\OPM3.TIM",
@@ -1855,7 +1885,7 @@ int redriver2_main(int argc, char** argv)
 	InitControllers();
 	Init_FileSystem();
 	InitSound();
-	
+
 	// [A] REDRIVER 2 version auto-detection
 	// this is the only difference between the files on CD
 #ifdef DEMO_VERSION
@@ -1885,12 +1915,13 @@ int redriver2_main(int argc, char** argv)
 	// init language
 	if (!InitStringMng())
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR!", "Unable to load language files!\n\nSee console for details", NULL);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR!",
+		                         "Unable to load language files!\n\nSee console for details", NULL);
 		return -1;
 	}
 
 	// TODO: divide game by the states, place main loop here.
-	
+
 	if (argc <= 1)
 #elif !defined(PSX)
 	
@@ -1901,11 +1932,11 @@ int redriver2_main(int argc, char** argv)
 		//PlayFMV(99);	// [A] don't show publisher logo
 
 		ShowHiresScreens(ScreenNames, 300, 0); // [A]
-		PlayFMV(0);		// play intro movie
+		PlayFMV(0); // play intro movie
 	}
 
 	CheckForCorrectDisc(0);
-	
+
 	// Init frontend
 	LOAD_OVERLAY("FRONTEND.BIN", _overlay_buffer);
 
@@ -1920,14 +1951,14 @@ int redriver2_main(int argc, char** argv)
 	SetState(STATE_INITFRONTEND, (void*)2);
 
 	LoadCurrentProfile(1);
-	
-#ifndef PSX	
+
+#ifndef PSX
 	int commandLinePropsShown;
 	commandLinePropsShown = 0;
 
 	for (int i = 1; i < argc; i++)
 	{
-		if (!strcmp(argv[i], "-ini") || 
+		if (!strcmp(argv[i], "-ini") ||
 			!strcmp(argv[i], "-cdimage"))
 		{
 			i++;
@@ -2051,7 +2082,7 @@ int redriver2_main(int argc, char** argv)
 				{
 					CurrentGameMode = GAMEMODE_REPLAY;
 					gLoadedReplay = 1;
-					
+
 					SetState(STATE_GAMELAUNCH);
 				}
 				else
@@ -2119,9 +2150,11 @@ void FadeScreen(int end_value)
 	SetupScreenFade(-32, end_value, gFastLoadingScreens ? 128 : 8);
 	FadingScreen = 1;
 
-	do {
+	do
+	{
 		RenderGame();
-	} while (FadingScreen);
+	}
+	while (FadingScreen);
 
 	DrawSync(0);
 	SetDispMask(0);
@@ -2188,12 +2221,12 @@ void UpdatePlayerInformation(void)
 
 			// [A] if all wheels above the water surface and we are falling down
 			// fade out and end the game
-			if(wheelsAboveWaterToDieWithFade > 0 && cp->hd.where.t[1] < -1000 && gDieWithFade == 0)
+			if (wheelsAboveWaterToDieWithFade > 0 && cp->hd.where.t[1] < -1000 && gDieWithFade == 0)
 			{
 				// fix for Havana tunnels and Chicago freeway
 				if (GameLevel <= 1)
 				{
-					if(wheelsAboveWaterToDieWithFade == 4)
+					if (wheelsAboveWaterToDieWithFade == 4)
 						gDieWithFade = 1;
 				}
 				else // car drown as usual
@@ -2223,7 +2256,7 @@ void UpdatePlayerInformation(void)
 
 		// die with fade on mountain race track
 		if ((gCurrentMissionNumber > 479 && gCurrentMissionNumber < 482 ||
-			gCurrentMissionNumber > 483 && gCurrentMissionNumber < 486) &&
+				gCurrentMissionNumber > 483 && gCurrentMissionNumber < 486) &&
 			cp->hd.where.t[1] < -750 && gDieWithFade == 0)
 		{
 			gDieWithFade = 1;
@@ -2278,7 +2311,7 @@ void RenderGame2(int view)
 	SetCameraVector();
 
 	SetupDrawMapPSX();
-	
+
 	DrawDrivingGames();
 	DrawThrownBombs();
 	AddGroundDebris();
@@ -2370,7 +2403,7 @@ void RenderGame2(int view)
 	notInDreaAndStevesEvilLair = Havana3DOcclusion(DrawMapPSX, (int*)&ObjectDrawnValue);
 
 	if (notInDreaAndStevesEvilLair)
-	{		
+	{
 		DrawSkyDome();
 
 		if (current->primtab - (current->primptr - PRIMTAB_SIZE) > 40000)
@@ -2402,7 +2435,7 @@ void RenderGame(void)
 }
 
 int Havana3DLevelDraw = -1;
-int Havana3DLevelMode = -1;			// 0 = uses 1.0 LEV file, 1 = uses v1.1 LEV file
+int Havana3DLevelMode = -1; // 0 = uses 1.0 LEV file, 1 = uses v1.1 LEV file
 
 // [D] [T]
 void InitGameVariables(void)
@@ -2434,7 +2467,7 @@ void InitGameVariables(void)
 	current_camera_angle = 2048;
 	gDieWithFade = 0;
 
-	pedestrianFelony = 0;	// [A] reset pedestrian felony and also cop visibility state
+	pedestrianFelony = 0; // [A] reset pedestrian felony and also cop visibility state
 	CopsCanSeePlayer = 0;
 
 	Havana3DLevelDraw = -1;
@@ -2519,10 +2552,10 @@ void DealWithHorn(char* hr, int i)
 		channel = i != 0 ? 5 : 2;
 
 		Start3DSoundVolPitch(channel, SOUND_BANK_CARS, modelId * 3 + 2,
-			car->hd.where.t[0],
-			car->hd.where.t[1],
-			car->hd.where.t[2], -10000,
-			4096);
+		                     car->hd.where.t[0],
+		                     car->hd.where.t[1],
+		                     car->hd.where.t[2], -10000,
+		                     4096);
 
 		if (NumPlayers > 1 && NoPlayerControl == 0)
 		{
@@ -2533,10 +2566,10 @@ void DealWithHorn(char* hr, int i)
 
 		channel = i != 0 ? 5 : 2;
 
-		SetChannelPosition3(channel, 
-			(VECTOR*)car->hd.where.t, 
-			(LONGVECTOR3*)car->st.n.linearVelocity, 
-			-2000, i * 8 + 4096, 0);
+		SetChannelPosition3(channel,
+		                    (VECTOR*)car->hd.where.t,
+		                    (LONGVECTOR3*)car->st.n.linearVelocity,
+		                    -2000, i * 8 + 4096, 0);
 	}
 
 	*hr = (*hr + 1) % 3;
@@ -2559,12 +2592,12 @@ int Havana3DOcclusion(occlFunc func, int* param)
 	}
 #endif
 
-	if (GameLevel == 1 && 
-		camera_position.vx <= -430044 && camera_position.vx >= -480278 && 
+	if (GameLevel == 1 &&
+		camera_position.vx <= -430044 && camera_position.vx >= -480278 &&
 		camera_position.vz <= -112814 && camera_position.vz >= -134323)
 	{
 		// TODO: Hardcode into different builds for PSX version
-		if(Havana3DLevelMode == -1)
+		if (Havana3DLevelMode == -1)
 		{
 			// try autodetecting
 			tempPos.vy = -3823;
@@ -2577,7 +2610,7 @@ int Havana3DOcclusion(occlFunc func, int* param)
 				Havana3DLevelMode = 0;
 		}
 
-		if(Havana3DLevelMode == 0)
+		if (Havana3DLevelMode == 0)
 		{
 			// v1.0 method
 			outside = 1;
@@ -2608,7 +2641,7 @@ int Havana3DOcclusion(occlFunc func, int* param)
 				else
 				{
 					draw = 15;
-					
+
 					if (camera_position.vy >= 1730)
 					{
 						draw = 14;
@@ -2617,7 +2650,7 @@ int Havana3DOcclusion(occlFunc func, int* param)
 						{
 							draw = 13;
 
-							if(camera_position.vz < -120000)
+							if (camera_position.vz < -120000)
 							{
 								draw = 12;
 
@@ -2637,7 +2670,7 @@ int Havana3DOcclusion(occlFunc func, int* param)
 			if (loop < 10)
 				loop = 10;
 		}
-		else if(Havana3DLevelMode == 1)
+		else if (Havana3DLevelMode == 1)
 		{
 			// v1.1 method - simpler one
 			outside = 0;
@@ -2697,7 +2730,7 @@ int Havana3DOcclusion(occlFunc func, int* param)
 			if (loop < 9)
 				loop = 9;
 		}
-	
+
 		otAltered = 0;
 
 		while (true)
@@ -2707,18 +2740,18 @@ int Havana3DOcclusion(occlFunc func, int* param)
 				events.camera = 0;
 				return outside;
 			}
-			
-			if (loop == 16) 
+
+			if (loop == 16)
 				break;
-			
+
 			if (draw != loop)
 			{
 				otAltered = 200;
 			}
-			
+
 			events.draw = loop;
 			current->ot += otAltered;
-			
+
 			(*func)(param);
 
 			if (otAltered != 0)
@@ -2726,18 +2759,18 @@ int Havana3DOcclusion(occlFunc func, int* param)
 				current->ot -= otAltered;
 				otAltered = 0;
 			}
-			
+
 			loop++;
 		}
 
 		events.camera = 0;
-	
+
 		if (draw == 15 && camera_position.vx > -458001)
 		{
 			events.camera = 0;
 			return outside;
 		}
-	
+
 		(*func)(param);
 		return 1;
 	}
@@ -2746,8 +2779,3 @@ int Havana3DOcclusion(occlFunc func, int* param)
 
 	return 1;
 }
-
-
-
-
-

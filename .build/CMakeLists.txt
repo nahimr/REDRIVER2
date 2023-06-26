@@ -65,6 +65,7 @@ add_subdirectory(dependencies/jpeg EXCLUDE_FROM_ALL)
 #### REDRIVER 2 PROJECT ####
 
 file(GLOB_RECURSE REDRIVER2_SOURCES ${REDRIVER2_PATH}/*.c ${REDRIVER2_PATH}/*.cpp)
+file(GLOB_RECURSE REDRIVER2_HEADERS ${REDRIVER2_PATH}/*.h ${REDRIVER2_PATH}/*.hpp)
 set_source_files_properties(${REDRIVER2_SOURCES} PROPERTIES LANGUAGE CXX)
 
 ## Add resource file ##
@@ -77,7 +78,7 @@ endif()
 if(ANDROID OR IOS OR TVOS)
     add_library(REDRIVER2 ${REDRIVER2_SOURCES})
 else()
-    add_executable(REDRIVER2 ${REDRIVER2_SOURCES} ${EXTRA_SOURCES})
+    add_executable(REDRIVER2 ${REDRIVER2_SOURCES} ${REDRIVER2_HEADERS} ${EXTRA_SOURCES})
 endif()
 
 target_compile_definitions(REDRIVER2 PUBLIC
@@ -103,14 +104,17 @@ if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     )
 endif()
 
-target_include_directories(REDRIVER2 PUBLIC 
+set(REDRIVER2_INCLUDES
     ${REDRIVER2_PATH}/Game 
     ${SDL2_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/discord
     ${PsyCross_SOURCE_DIR}/include 
     ${PsyCross_SOURCE_DIR}/include/psx
     ${libjpeg_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/dependencies/jpeg
 )
+
+target_include_directories(REDRIVER2 PUBLIC ${REDRIVER2_INCLUDES})
 
 if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
     set(PLATFORM_LD_LIBS GL openal)
@@ -126,9 +130,9 @@ if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
 elseif(WIN32)
     set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../src FILES ${REDRIVER2_SOURCES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../src FILES ${REDRIVER2_SOURCES} ${REDRIVER2_HEADERS})
     set(PLATFORM_LD_LIBS opengl32)
-    set(PLATFORM_STATIC_LIBS PsyCross)
+    set(PLATFORM_STATIC_LIBS PsyCross "${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/libs/x86/discord_game_sdk.dll.lib")
     set(VS_STARTUP_PROJECT REDRIVER2)
     target_compile_options(REDRIVER2 PRIVATE
         /wd4996 
@@ -175,6 +179,7 @@ if (WIN32 OR UNIX)
 
         install(TARGETS SDL2 RUNTIME DESTINATION .)
         install(TARGETS OpenAL RUNTIME DESTINATION .)
+        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/libs/x86/discord_game_sdk.dll" DESTINATION .)
     else()
         set(CPACK_GENERATOR "TGZ")
         install(TARGETS jpeg LIBRARY DESTINATION .)

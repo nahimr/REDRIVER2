@@ -22,6 +22,11 @@
 
 #include "utils/ini.h"
 
+#ifdef _WIN32
+#include "utils/discord.h"
+#include <SDL_thread.h>
+#endif
+
 #include <SDL_scancode.h>
 #include <SDL_gamecontroller.h>
 #include <SDL_messagebox.h>
@@ -663,6 +668,11 @@ int main(int argc, char** argv)
 
 	// start with menu mapping
 	SwitchMappings(1);
+
+#ifdef _WIN32
+
+	SDL_CreateThread(discord_init, "Discord", NULL);
+#endif
 
 	redriver2_main(argc, argv);
 
