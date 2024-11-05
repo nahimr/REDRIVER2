@@ -17,7 +17,6 @@
 #endif
 
 #ifdef WIN32
-#define DISCORD_SUPPORT 1
 #endif
 
 #endif // PLATFORM_H

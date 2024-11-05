@@ -22,11 +22,6 @@
 
 #include "utils/ini.h"
 
-#ifdef _WIN32
-#include "utils/discord.h"
-#include <SDL_thread.h>
-#endif
-
 #include <SDL_scancode.h>
 #include <SDL_gamecontroller.h>
 #include <SDL_messagebox.h>
@@ -34,7 +29,7 @@
 #include "PsyX/PsyX_globals.h"
 
 
-int(*GPU_printf)(const char *fmt, ...);
+int(*GPU_printf)(const char* fmt, ...);
 
 bool CtrlModifier;
 bool ShiftModifier;
@@ -121,7 +116,7 @@ void FreeCameraKeyboardHandler(int nKey, char down)
 		}
 	}
 
-	if(!down)
+	if (!down)
 		return;
 
 	if (nKey == SDL_SCANCODE_F7)
@@ -220,17 +215,17 @@ void GameDebugKeys(int nKey, char down)
 		*/
 
 		// Find the clue
-		LeadValues.tEnd			= 500;	LeadValues.tAvelLimit	= 1000;
-		LeadValues.tDist		= 428;	LeadValues.tDistMul		= 21;
-		LeadValues.tWidth		= 885;	LeadValues.tWidthMul	= 10;
-		LeadValues.tWidth80		= 487;	LeadValues.tWidth80Mul	= 2;
+		LeadValues.tEnd = 500;	LeadValues.tAvelLimit = 1000;
+		LeadValues.tDist = 428;	LeadValues.tDistMul = 21;
+		LeadValues.tWidth = 885;	LeadValues.tWidthMul = 10;
+		LeadValues.tWidth80 = 487;	LeadValues.tWidth80Mul = 2;
 
-		LeadValues.hEnd			= 700;	LeadValues.dEnd			= 350;
-		LeadValues.hDist		= 1731; LeadValues.hDistMul		= 30;
-		LeadValues.hWidth		= 320;	LeadValues.hWidthMul	= 7;
-		LeadValues.hWidth80		= 225;	LeadValues.hWidth80Mul	= 3;
+		LeadValues.hEnd = 700;	LeadValues.dEnd = 350;
+		LeadValues.hDist = 1731; LeadValues.hDistMul = 30;
+		LeadValues.hWidth = 320;	LeadValues.hWidthMul = 7;
+		LeadValues.hWidth80 = 225;	LeadValues.hWidth80Mul = 3;
 
-		CAR_DATA *pCar = &car_data[player[0].playerCarId];
+		CAR_DATA* pCar = &car_data[player[0].playerCarId];
 
 		LONGVECTOR4 startpos = {
 			pCar->hd.where.t[0],
@@ -312,7 +307,7 @@ void GameDebugKeys(int nKey, char down)
 		{
 			char playerid = 0xff;
 
-			InitPlayer((PLAYER *)(player + 1), &car_data[slot], 4, dir, &startpos, model, palette, &playerid);
+			InitPlayer((PLAYER*)(player + 1), &car_data[slot], 4, dir, &startpos, model, palette, &playerid);
 			already = true;
 		}
 		else
@@ -472,7 +467,7 @@ PsyXControllerMapping g_gcMenuMappings = { 0x654 };
 
 void SwitchMappings(int menu)
 {
-	if(menu)
+	if (menu)
 	{
 		g_cfg_keyboardMapping = g_kbMenuMappings;
 		g_cfg_controllerMapping = g_gcMenuMappings;
@@ -499,7 +494,7 @@ int main(int argc, char** argv)
 	_primTab2 = (char*)malloc(PRIMTAB_SIZE);			// 0x119400
 	_sbank_buffer = (char*)malloc(0x80000);				// 0x180000
 	_replay_buffer = (char*)malloc(0x50000);			// 0x1fabbc
-	
+
 #else
 	_overlay_buffer = g_Overlay_buffer;		// 0x1C0000
 	_frontend_buffer = g_Frontend_buffer;	// 0xFB400
@@ -517,14 +512,14 @@ int main(int argc, char** argv)
 	GPU_printf = printf;
 #endif // _DEBUG
 
-	
+
 #if 0 // defined(__EMSCRIPTEN__)
 	// mount the current folder as a NODEFS instance
 	// inside of emscripten
 	EM_ASM(
 		FS.mkdir('/working');
-		FS.mount(NODEFS, {}, '/working1');
-	);
+	FS.mount(NODEFS, {}, '/working1');
+		);
 #endif
 
 	const char* configFilename = "config.ini";
@@ -537,7 +532,7 @@ int main(int argc, char** argv)
 			i++;
 			configFilename = argv[i];
 		}
-		else if(!strcmp(argv[i], "-cdimage"))
+		else if (!strcmp(argv[i], "-cdimage"))
 		{
 			i++;
 			cdImageFileName = argv[i];
@@ -567,11 +562,11 @@ int main(int argc, char** argv)
 		const char* dataFolderStr = ini_get(config, "fs", "dataFolder");
 		const char* userReplaysStr = ini_get(config, "game", "userChases");
 
-		if(!cdImageFileName)
+		if (!cdImageFileName)
 			cdImageFileName = ini_get(config, "cdfs", "image");
 
 		InitUserReplays(userReplaysStr);
-		
+
 		// configure Psy-X pads
 		ini_sget(config, "pad", "pad1device", "%d", &g_cfg_controllerToSlotMapping[0]);
 		ini_sget(config, "pad", "pad2device", "%d", &g_cfg_controllerToSlotMapping[1]);
@@ -597,10 +592,10 @@ int main(int argc, char** argv)
 		ini_sget(config, "game", "fastLoadingScreens", "%d", &gFastLoadingScreens);
 		ini_sget(config, "game", "languageId", "%d", &gUserLanguage);
 		ini_sget(config, "game", "overrideContent", "%d", &gContentOverride);
-		
-	
+
+
 		gCameraDefaultScrZ = MAX(MIN(newScrZ, 384), 128);
-		
+
 		if (dataFolderStr)
 		{
 			strcpy(gDataFolder, dataFolderStr);
@@ -654,7 +649,7 @@ int main(int argc, char** argv)
 	// configure Psy-X CD image reader
 	if (cdImageFileName)
 		PsyX_CDFS_Init(cdImageFileName, 0, 0);
-	
+
 	if (config)
 	{
 		ParseKeyboardMappings(config, "kbcontrols_game", g_kbGameMappings);
@@ -662,17 +657,12 @@ int main(int argc, char** argv)
 
 		ParseControllerMappings(config, "controls_game", g_gcGameMappings);
 		ParseControllerMappings(config, "controls_menu", g_gcMenuMappings);
-		
+
 		ini_free(config);
 	}
 
 	// start with menu mapping
 	SwitchMappings(1);
-
-#ifdef _WIN32
-
-	SDL_CreateThread(discord_init, "Discord", NULL);
-#endif
 
 	redriver2_main(argc, argv);
 

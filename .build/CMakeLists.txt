@@ -4,8 +4,11 @@ project(REDRIVER2 C CXX)
 
 option(GAME_REGION "Select region (NTSC_VERSION or PAL_VERSION). Default: NTSC_VERSION" "NTSC_VERSION")
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "Project can only be built in 32 bits mode !")
+endif()
+
 set(REDRIVER2_PATH ../src)
-set(CMAKE_CXX_STANDARD 11)
 set(ALSOFT_EXAMPLES OFF)
 set(ALSOFT_UTILS OFF)
 set(SDL_TESTS OFF)
@@ -13,6 +16,10 @@ set(SDL_TEST OFF)
 set(SDL_STATIC OFF)
 set(SDL2_DISABLE_SDL2MAIN ON)
 set(EXTRA_SOURCES)
+
+if (MSVC)
+    set(WIN32 ON CACHE BOOL "Target is Windows 32 Platform")
+endif()
 
 if(NOT(CMAKE_BUILD_TYPE))
     set(CMAKE_BUILD_TYPE "Release")
@@ -41,10 +48,19 @@ if(ANDROID OR EMSCRIPTEN OR IOS OR TVOS OR WIN32)
 	set(SDL2_INCLUDE_DIR ${SDL2_LIBRARY}/include)
 
 	# Build SDL2 from source
+
+    # set(SDL_TESTS OFF CACHE BOOL "Build SDL Tests")
+    # set(SDL_TEST OFF CACHE BOOL "Build SDL Test")
+    # set(SDL_STATIC OFF CACHE BOOL "Don't build static SDL")
+
 	add_subdirectory(${SDL2_LIBRARY} EXCLUDE_FROM_ALL)
 	include_directories(${SDL2_INCLUDE_DIR})
 
 	# Build OpenAL from source
+
+    # set(ALSOFT_EXAMPLES OFF CACHE "Don't build OpenAL examples" FORCE)
+    # set(ALSOFT_UTILS OFF CACHE "Don't build OpenAL utils" FORCE)
+
 	add_subdirectory(${OPENAL_LIBRARY} EXCLUDE_FROM_ALL)
 	include_directories(${OPENAL_INCLUDE_DIR})
 else()
@@ -59,7 +75,13 @@ else()
 	endif()
 endif()
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 11)
+
 add_subdirectory(dependencies/PsyCross)
+
+set(BUILD_STATIC ON CACHE BOOL "Build JPEG as static")
+# set(BUILD_TESTS OFF CACHE BOOL "Don't build JPEG tests" FORCE)
 add_subdirectory(dependencies/jpeg EXCLUDE_FROM_ALL)
 
 #### REDRIVER 2 PROJECT ####
@@ -116,6 +138,8 @@ set(REDRIVER2_INCLUDES
 
 target_include_directories(REDRIVER2 PUBLIC ${REDRIVER2_INCLUDES})
 
+### COMPILATION ###
+
 if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
     set(PLATFORM_LD_LIBS GL openal)
     set(PLATFORM_STATIC_LIBS m PsyCross dl)
@@ -128,12 +152,8 @@ if (UNIX AND NOT(CMAKE_CROSSCOMPILING))
         -fpermissive
     )
 elseif(WIN32)
-    set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../src FILES ${REDRIVER2_SOURCES} ${REDRIVER2_HEADERS})
     set(PLATFORM_LD_LIBS opengl32)
-    set(PLATFORM_STATIC_LIBS PsyCross "${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/libs/x86/discord_game_sdk.dll.lib")
-    set(VS_STARTUP_PROJECT REDRIVER2)
+    set(PLATFORM_STATIC_LIBS PsyCross)
     target_compile_options(REDRIVER2 PRIVATE
         /wd4996 
         /wd4554
@@ -157,11 +177,20 @@ elseif(ANDROID)
     )
 endif()
 
+### MSVC ###
+if (MSVC)
+    set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT REDRIVER2)
+    set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../src FILES ${REDRIVER2_SOURCES} ${REDRIVER2_HEADERS})
+endif()
+
 target_link_libraries(REDRIVER2 ${PLATFORM_STATIC_LIBS} ${PLATFORM_LD_LIBS} jpeg SDL2)
 
 ### BUILDING PACKAGES ###
 
-if (WIN32 OR UNIX)
+if (WIN32 OR UNIX AND NOT(ANDROID))
     install(TARGETS REDRIVER2 RUNTIME DESTINATION .)
 
     if (WIN32)
@@ -179,7 +208,7 @@ if (WIN32 OR UNIX)
 
         install(TARGETS SDL2 RUNTIME DESTINATION .)
         install(TARGETS OpenAL RUNTIME DESTINATION .)
-        install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/libs/x86/discord_game_sdk.dll" DESTINATION .)
+        # install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/platforms/windows/libs/x86/discord_game_sdk.dll" DESTINATION .)
     else()
         set(CPACK_GENERATOR "TGZ")
         install(TARGETS jpeg LIBRARY DESTINATION .)
@@ -197,4 +226,8 @@ if (WIN32 OR UNIX)
     )
     
     include(CPack)
+endif()
+
+if (ANDROID)
+    install(TARGETS REDRIVER2 LIBRARY DESTINATION .)
 endif()

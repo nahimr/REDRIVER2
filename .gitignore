@@ -42,7 +42,9 @@ src/project_*
 src/*.make
 src/Makefile
 .build/build/*
+.build/android-build/*
 !.build/build/.gitkeep
 *.wav
+*.img
 jpsxdec.ini
 *.dmp

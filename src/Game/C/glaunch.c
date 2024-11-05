@@ -18,9 +18,6 @@
 
 #include "Frontend/FEmain.h"
 
-#ifdef DISCORD_SUPPORT
-#include "../utils/discord.h"
-#endif
 
 struct MISSION_STEP
 {
