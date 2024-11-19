@@ -299,8 +299,7 @@ MODEL* GetCarModel(char* src, char** dest, int KeepNormals, int modelNumber, int
 	int size;
 	TOP_MODEL* top_mdl;
 	OFFSET_MODEL* offs_mdl;
-	// LOADED_MODEL* model;
-	MODEL* _mdl;
+	MODEL* model;
 	char* mem;
 
 #ifndef PSX
@@ -312,8 +311,7 @@ MODEL* GetCarModel(char* src, char** dest, int KeepNormals, int modelNumber, int
 	mem = src;
 #endif
 
-	// model = (LOADED_MODEL*)*dest; // Model in memory with offsets (loaded from file)
-	_mdl = (MODEL*)*dest;
+	model = (MODEL*)*dest;
 	top_mdl = (TOP_MODEL*)*dest;
 	offs_mdl = (OFFSET_MODEL*)((char*)top_mdl + sizeof(TOP_MODEL));
 
@@ -337,27 +335,25 @@ MODEL* GetCarModel(char* src, char** dest, int KeepNormals, int modelNumber, int
 	//*dest += size + 2;
 	// *dest = (char*)((int)model + size + 3 & 0xfffffffc); // 32 bits
 	// *dest = (char*)((unsigned long long)model + size + 3L & 0xfffffffffffffffc); // 64 bits
-	*dest = (char*)((s_int64_t)_mdl + size + 3 & ~3); // [A] 64 and 32 bits
+	*dest = (char*)((s_int64_t)model + size + 3 & ~3); // [A] 64 and 32 bits
 
 	// Set values to 64bits
-	_mdl->vertices = offs_mdl->vertices;
-	_mdl->poly_block = offs_mdl->poly_block;
-	_mdl->normals = offs_mdl->normals;
-	_mdl->point_normals = offs_mdl->point_normals;
-	_mdl->collision_block = offs_mdl->collision_block;
+	model->vertices = offs_mdl->vertices;
+	model->poly_block = offs_mdl->poly_block;
+	model->normals = offs_mdl->normals;
+	model->point_normals = offs_mdl->point_normals;
+	model->collision_block = offs_mdl->collision_block;
 
-	_mdl->vertices += (s_int64_t)_mdl;
-	_mdl->normals += (s_int64_t)_mdl;
-	_mdl->poly_block = (s_int64_t)mem + _mdl->poly_block;
+	model->vertices += (s_int64_t)model;
+	model->normals += (s_int64_t)model;
+	model->poly_block = (s_int64_t)mem + model->poly_block;
 
 	if (KeepNormals == 0)
-		_mdl->point_normals = 0;
+		model->point_normals = 0;
 	else
-		_mdl->point_normals += (s_int64_t)_mdl;
+		model->point_normals += (s_int64_t)model;
 
-	// D_MALLOC_END()
-
-	return _mdl;
+	return model;
 }
 
 // [D] [T]
