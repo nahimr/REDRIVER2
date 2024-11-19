@@ -1,3 +1,15 @@
-[submodule "src_rebuild/PsyCross"]
-	path = src_rebuild/PsyCross
-	url = https://github.com/OpenDriver2/PsyCross.git
+[submodule ".build/dependencies/PsyCross"]
+	path = .build/dependencies/PsyCross
+	url = https://github.com/nahimr/PsyCross.git
+	branch = dev-nzero
+[submodule ".build/dependencies/SDL2"]
+	path = .build/dependencies/SDL2
+	url = https://github.com/libsdl-org/SDL.git
+	branch = SDL2
+[submodule ".build/dependencies/openal"]
+	path = .build/dependencies/openal
+	url = https://github.com/kcat/openal-soft.git
+	branch = master
+[submodule ".build/dependencies/jpeg"]
+	path = .build/dependencies/jpeg
+	url = https://github.com/LuaDist/libjpeg.git
