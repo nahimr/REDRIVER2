@@ -1,6 +1,9 @@
 package com.opendriver.redriver2;
 
-import android.app.Activity;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.PersistableBundle;
+import android.util.Log;
 import org.libsdl.app.SDLActivity;
 import android.provider.Settings;
 import android.os.Build;
@@ -8,7 +11,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.widget.Toast;
 import android.net.Uri;
-import android.os.Bundle;
+import java.io.InputStream;
 
 public class GameActivity extends SDLActivity {
 
@@ -27,7 +30,9 @@ public class GameActivity extends SDLActivity {
                 // startActivityForResult(intent, PERMISSION_REQUEST_CODE);
             } 
         } else {
-            GameActivity.this.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                GameActivity.this.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            }
         }
     }
 

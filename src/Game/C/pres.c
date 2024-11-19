@@ -196,7 +196,7 @@ void SetCLUT16Flags(ushort clutID, ushort mask, char transparent)
 	x = (clutID & 63) * 16;
 	y = (clutID >> 6);
 
-	StoreClut2((ulong *)buffer, x, y);
+	StoreClut2((u_long*)buffer, x, y);
 
 	pCurrent = buffer;
 	ctr = 1;

@@ -4,9 +4,9 @@ project(REDRIVER2 C CXX)
 
 option(GAME_REGION "Select region (NTSC_VERSION or PAL_VERSION). Default: NTSC_VERSION" "NTSC_VERSION")
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    message(FATAL_ERROR "Project can only be built in 32 bits mode !")
-endif()
+# if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+#     message(FATAL_ERROR "Project can only be built in 32 bits mode !")
+# endif()
 
 set(REDRIVER2_PATH ../src)
 set(ALSOFT_EXAMPLES OFF)
@@ -80,7 +80,9 @@ set(CMAKE_C_STANDARD 11)
 
 add_subdirectory(dependencies/PsyCross)
 
-set(BUILD_STATIC ON CACHE BOOL "Build JPEG as static")
+if (NOT(ANDROID))
+    set(BUILD_STATIC ON CACHE BOOL "Build JPEG as static")
+endif()
 # set(BUILD_TESTS OFF CACHE BOOL "Don't build JPEG tests" FORCE)
 add_subdirectory(dependencies/jpeg EXCLUDE_FROM_ALL)
 
@@ -179,7 +181,11 @@ endif()
 
 ### MSVC ###
 if (MSVC)
-    set(CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
+    # set_property(TARGET REDRIVER2 PROPERTY VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
+    # set_property(TARGET SDL2 PROPERTY VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
+    # set_property(TARGET OpenAL PROPERTY VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
+    # set_property(TARGET jpeg PROPERTY VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
+    # set_property(TARGET common PROPERTY VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE "x86")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT REDRIVER2)
     set_property(TARGET REDRIVER2 PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../data)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)

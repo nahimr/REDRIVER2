@@ -638,7 +638,10 @@ void init_spooled_models(void)
 	int model_number;
 	MODEL *parentmodel;
 	char *addr;
-	MODEL *model;
+	TOP_MODEL* top_mdl;
+	OFFSET_MODEL* offs_mdl;
+	MODEL* _mdl;
+
 	int i;
 	int size;
 
@@ -656,45 +659,56 @@ void init_spooled_models(void)
 		model_number = new_model_numbers[i];
 
 		size = *(int *)addr;
-		model = (MODEL *)(addr + 4);
+
+		_mdl = (MODEL*)(addr + 4);
+		top_mdl = (TOP_MODEL*)(addr + 4);
+		offs_mdl = (OFFSET_MODEL*)((char*)top_mdl + sizeof(TOP_MODEL));
+
+		_mdl->vertices = offs_mdl->vertices;
+		_mdl->poly_block = offs_mdl->poly_block;
+		_mdl->normals = offs_mdl->normals;
+		_mdl->point_normals = offs_mdl->point_normals;
+		_mdl->collision_block = offs_mdl->collision_block;
 
 		lod = Low2LowerDetailTable[model_number];
 
 		if (lod != 0xffff && lod != model_number)
 			pLodModels[model_number] = modelpointers[lod];
 
-		if (model->instance_number == -1)
+		if (_mdl->instance_number == -1)
 		{
-			if ((uint)model->collision_block != 0)
-				model->collision_block += (int)model;
+			if ((uint)_mdl->collision_block != 0)
+				_mdl->collision_block += (s_int64_t)_mdl;
 
-			model->vertices += (int)model;
-			model->normals += (int)model;
-			model->point_normals += (int)model;
+			_mdl->vertices += (s_int64_t)_mdl;
+			_mdl->normals += (s_int64_t)_mdl;
+			_mdl->point_normals += (s_int64_t)_mdl;
 
 			InitSpooledAnimObj(model_number);
 		}
 		else
 		{
-			parentmodel = modelpointers[model->instance_number];
+			parentmodel = modelpointers[_mdl->instance_number];
 
 			if ((uint)parentmodel->collision_block != 0)
-				model->collision_block = parentmodel->collision_block;
+				_mdl->collision_block = parentmodel->collision_block;
 
-			model->vertices = parentmodel->vertices;
-			model->normals = parentmodel->normals;
-			model->point_normals = parentmodel->point_normals;
+			_mdl->vertices = parentmodel->vertices;
+			_mdl->normals = parentmodel->normals;
+			_mdl->point_normals = parentmodel->point_normals;
 
 			InitSpooledAnimObj(parentmodel->instance_number);
 		}
 	
-		model->poly_block += (int)model;
+		_mdl->poly_block += (s_int64_t)_mdl;
 
-		modelpointers[model_number] = model;
-		pLodModels[model_number] = model;
+		modelpointers[model_number] = _mdl;
+		pLodModels[model_number] = _mdl;
 
 		addr += size + 4;
 	}
+
+	SPOOL_INFO("%d models slots loaded\n", nmodels);
 
 	LoadingArea = 0;
 }
@@ -1760,7 +1774,7 @@ void CleanModelSpooled(void)
 	while (loadaddr < (int*)(specLoadBuffer + CDSECTOR_SIZE))
 		*modelMemory++ = *loadaddr++;
 
-	mem = (int*)((int)gCarCleanModelPtr[4] + gCarCleanModelPtr[4]->poly_block);	// [A] pls check, might be invalid
+	mem = (int*)((s_int64_t)gCarCleanModelPtr[4] + gCarCleanModelPtr[4]->poly_block);	// [A] pls check, might be invalid
 
 	if (specBlocksToLoad == 0 || mem < modelMemory)
 	{
@@ -1775,10 +1789,10 @@ void CleanModelSpooled(void)
 		specBlocksToLoad = 0;
 		modelMemory = mem;
 
-		gCarCleanModelPtr[4]->vertices += (int)gCarCleanModelPtr[4];
-		gCarCleanModelPtr[4]->normals += (int)gCarCleanModelPtr[4];
-		gCarCleanModelPtr[4]->point_normals += (int)gCarCleanModelPtr[4];
-		gCarCleanModelPtr[4]->poly_block += (int)gCarCleanModelPtr[4];
+		gCarCleanModelPtr[4]->vertices += (s_int64_t)gCarCleanModelPtr[4];
+		gCarCleanModelPtr[4]->normals += (s_int64_t)gCarCleanModelPtr[4];
+		gCarCleanModelPtr[4]->point_normals += (s_int64_t)gCarCleanModelPtr[4];
+		gCarCleanModelPtr[4]->poly_block += (s_int64_t)gCarCleanModelPtr[4];
 
 		NewCarModel[4].nlist = (SVECTOR *)gCarCleanModelPtr[4]->point_normals;
 		NewCarModel[4].vlist = (SVECTOR *)gCarCleanModelPtr[4]->vertices;
@@ -1809,7 +1823,7 @@ void DamagedModelSpooled(void)
 	while (loadaddr < (int*)(specLoadBuffer + CDSECTOR_SIZE))
 		*modelMemory++ = *loadaddr++;
 
-	mem = (int*)((int)gCarDamModelPtr[4] + gCarDamModelPtr[4]->poly_block);	// [A] pls check, might be invalid
+	mem = (int*)((s_int64_t)gCarDamModelPtr[4] + gCarDamModelPtr[4]->poly_block);	// [A] pls check, might be invalid
 
 	if (specBlocksToLoad == 0 || mem < modelMemory)
 	{
@@ -1824,10 +1838,10 @@ void DamagedModelSpooled(void)
 		specBlocksToLoad = 0;
 		modelMemory = mem;
 
-		gCarDamModelPtr[4]->vertices += (int)gCarDamModelPtr[4];
-		gCarDamModelPtr[4]->normals += (int)gCarDamModelPtr[4];
-		gCarDamModelPtr[4]->poly_block += (int)gCarDamModelPtr[4];
-		gCarDamModelPtr[4]->point_normals += (int)gCarDamModelPtr[4];
+		gCarDamModelPtr[4]->vertices += (s_int64_t)gCarDamModelPtr[4];
+		gCarDamModelPtr[4]->normals += (s_int64_t)gCarDamModelPtr[4];
+		gCarDamModelPtr[4]->poly_block += (s_int64_t)gCarDamModelPtr[4];
+		gCarDamModelPtr[4]->point_normals += (s_int64_t)gCarDamModelPtr[4];
 	}
 
 	if (quickSpool != 1)
@@ -1856,7 +1870,7 @@ void LowModelSpooled(void)
 	while (loadaddr < (int*)(specLoadBuffer + CDSECTOR_SIZE))
 		*modelMemory++ = *loadaddr++;
 
-	mem = (int*)((int)gCarLowModelPtr[4] + gCarLowModelPtr[4]->poly_block);	// [A] pls check, might be invalid
+	mem = (int*)((s_int64_t)gCarLowModelPtr[4] + gCarLowModelPtr[4]->poly_block);	// [A] pls check, might be invalid
 
 	if (specBlocksToLoad == 0 || mem < modelMemory)
 	{
@@ -1871,10 +1885,10 @@ void LowModelSpooled(void)
 		specBlocksToLoad = 0;
 		modelMemory = mem;
 
-		gCarLowModelPtr[4]->vertices += (int)gCarLowModelPtr[4];
-		gCarLowModelPtr[4]->normals += (int)gCarLowModelPtr[4];
-		gCarLowModelPtr[4]->poly_block += (int)gCarLowModelPtr[4];
-		gCarLowModelPtr[4]->point_normals += (int)gCarLowModelPtr[4];
+		gCarLowModelPtr[4]->vertices += (s_int64_t)gCarLowModelPtr[4];
+		gCarLowModelPtr[4]->normals += (s_int64_t)gCarLowModelPtr[4];
+		gCarLowModelPtr[4]->poly_block += (s_int64_t)gCarLowModelPtr[4];
+		gCarLowModelPtr[4]->point_normals += (s_int64_t)gCarLowModelPtr[4];
 
 		NewLowCarModel[4].nlist = (SVECTOR *)gCarLowModelPtr[4]->point_normals;
 		NewLowCarModel[4].vlist = (SVECTOR *)gCarLowModelPtr[4]->vertices;
@@ -1931,10 +1945,10 @@ void CleanSpooled(void)
 		}
 #endif
 		
-		model->vertices += (int)model;
-		model->poly_block += (int)model;
-		model->normals += (int)model;
-		model->point_normals += (int)model;
+		model->vertices += (s_int64_t)model;
+		model->poly_block += (s_int64_t)model;
+		model->normals += (s_int64_t)model;
+		model->point_normals += (s_int64_t)model;
 
 		whichCP = baseSpecCP;
 
@@ -1964,10 +1978,10 @@ void LowSpooled(void)
 		}
 #endif
 		
-		model->vertices += (int)model;
-		model->normals += (int)model;
-		model->poly_block += (int)model;
-		model->point_normals += (int)model;
+		model->vertices += (s_int64_t)model;
+		model->normals += (s_int64_t)model;
+		model->poly_block += (s_int64_t)model;
+		model->point_normals += (s_int64_t)model;
 
 		buildNewCarFromModel(&NewLowCarModel[4], model, 0);
 	}

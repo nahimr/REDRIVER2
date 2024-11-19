@@ -15,6 +15,7 @@
 
 #include "cars.h"
 #include "convert.h"
+#include "models.h"
 
 #ifdef USE_PGXP
 #include <math.h>
@@ -828,6 +829,18 @@ void StoreVertexLists(void)
 		
 		// store start index
 		cTannerVNumbers[i] = counter;
+
+		// for (int i = 0; i < 1536; i++)
+		// {
+		// 	MODEL* mdl = modelpointers[i];
+		//
+		// 	PsyX_Log_Info("mdl(%p), vertices(%p)\n", mdl, mdl->vertices);
+		//
+		// 	if ((void*) mdl == (void*) pModel)
+		// 	{
+		// 		PsyX_Log_Warning("Matched ! (%d)\n", i);
+		// 	}
+		// }
 
 		destVerts = &vTannerList[counter];
 		srcVerts = (SVECTOR*)pModel->vertices;

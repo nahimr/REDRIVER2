@@ -19,10 +19,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
@@ -51,7 +48,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings;
 import android.os.Build.VERSION;
+import com.opendriver.redriver2.Decompressor;
+import com.opendriver.redriver2.R;
 
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -321,6 +321,18 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         return new SDLSurface(context);
     }
 
+    private void ExtractRD2Content() {
+        Log.d("REDRIVER2", "Extracting Content...");
+        String unzipLocation = getExternalFilesDir(null).getAbsolutePath() + "/"; ///Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+
+        Log.d("REDRIVER2", unzipLocation);
+        InputStream in = getResources().openRawResource(R.raw.content);
+        Decompressor d = new Decompressor(in, unzipLocation);
+
+        d.unzip();
+        Log.d("REDRIVER2", "Content Extracted !");
+    }
+
     // Setup
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,6 +340,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         Log.v(TAG, "Model: " + Build.MODEL);
         Log.v(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
+
+        ExtractRD2Content();
 
         try {
             Thread.currentThread().setName("SDLActivity");

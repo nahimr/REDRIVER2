@@ -49,7 +49,7 @@ void PrintFMVText(char *str, int x, short y, int brightness)
 	OTTYPE ot;
 	POLY_FT4* poly;
 
-	ClearOTagR((ulong*)&ot, 1);
+	ClearOTagR((u_long*)&ot, 1);
 	poly = fmvTextPolys;
 
 	str_w = 0;
@@ -119,7 +119,7 @@ void PrintFMVText(char *str, int x, short y, int brightness)
 		}
 	}
 
-	DrawOTag((ulong*)&ot);
+	DrawOTag((u_long*)&ot);
 }
 
 int UnpackJPEG(unsigned char* src_buf, unsigned src_length, unsigned bpp, unsigned char* dst_buf, int& width, int& height)

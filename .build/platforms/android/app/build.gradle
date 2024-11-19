@@ -13,7 +13,7 @@ android {
         externalNativeBuild {
             cmake {
                 targets 'REDRIVER2'
-                arguments '-DANDROID_STL=c++_shared'
+                arguments '-DANDROID_STL=c++_shared', '-DANDROID=1'
                 abiFilters 'armeabi-v7a', 'x86'
             }
         }

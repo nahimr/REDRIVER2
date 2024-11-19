@@ -43,6 +43,7 @@ src/*.make
 src/Makefile
 .build/build/*
 .build/android-build/*
+.build/build-x86/*
 !.build/build/.gitkeep
 *.wav
 *.img

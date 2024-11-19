@@ -66,7 +66,9 @@ extern void sys_freeall();
 #endif
 
 #else
-#define D_MALLOC(size)		(char*)mallocptr; mallocptr += (((size) + 3) & -4);
+#define D_MALLOC(size) \
+	(char*)mallocptr; mallocptr += (((size) + 3) & -4);\
+	printWarning("malloc_begin(%d) in %s, line %d\n", size, __FUNCTION__, __LINE__);
 #define D_TEMPALLOC(size)	(char*)mallocptr
 #define D_TEMPFREE()
 #endif
@@ -92,6 +94,8 @@ extern void sys_freeall();
 		D_TEMPFREE();\
 		if(mallocptr > _oldmalloc)\
 			DMalloc_DebugPrint("malloc(%d) in " __FUNCTION__ ", line %d. Malloc usage: %d\n", mallocptr-_oldmalloc, __LINE__, (mallocptr-malloctab));\
+		else\
+			DMalloc_DebugPrint("malloc(%d) failure in " __FUNCTION__ ", line %d, Malloc usage: %d\n", __LINE__, (mallocptr-malloctab));\
 	} // D_MALLOC_BEGIN block
 #endif
 

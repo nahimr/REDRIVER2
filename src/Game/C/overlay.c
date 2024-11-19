@@ -238,7 +238,7 @@ void DrawPercentageBar(PERCENTAGE_BAR *bar)
 		poly->y2 = max_y;
 		poly->y3 = max_y;
 
-		addPrim((u_long*)(current->ot + 1), poly);
+		addPrim(current->ot + 1, poly);
 		current->primptr += sizeof(POLY_G4);
 	}
 
@@ -271,7 +271,7 @@ void DrawPercentageBar(PERCENTAGE_BAR *bar)
 	poly2->y2 = max_y;
 	poly2->y3 = max_y;
 
-	addPrim((u_long*)(current->ot+1), poly2);
+	addPrim(current->ot + 1, poly2);
 	current->primptr += sizeof(POLY_G4);
 
 	// draw contours
@@ -293,7 +293,7 @@ void DrawPercentageBar(PERCENTAGE_BAR *bar)
 	lineF4->y2 = max_y;
 	lineF4->y3 = max_y;
 
-	addPrim((u_long*)(current->ot + 1), lineF4);
+	addPrim(current->ot + 1, lineF4);
 	current->primptr += sizeof(LINE_F4);
 		
 	LINE_F2* lineF2 = (LINE_F2*)current->primptr;
@@ -308,7 +308,7 @@ void DrawPercentageBar(PERCENTAGE_BAR *bar)
 	lineF2->x1 = min_x - 1;
 	lineF2->y1 = max_y;
 
-	addPrim((u_long*)(current->ot + 1), lineF2);
+	addPrim(current->ot + 1, lineF2);
 	current->primptr += sizeof(LINE_F2);
 
 	TransparencyOn(current->ot + 1, 0x20);
@@ -441,7 +441,7 @@ void DrawProximityBar(PERCENTAGE_BAR *bar)
 	lineF4->y2 = max_y;
 	lineF4->y3 = max_y;
 
-	addPrim((u_long*)(current->ot + 1), lineF4);
+	addPrim(current->ot + 1, lineF4);
 	current->primptr += sizeof(LINE_F4);
 
 	LINE_F2* lineF2 = (LINE_F2*)current->primptr;
@@ -456,7 +456,7 @@ void DrawProximityBar(PERCENTAGE_BAR *bar)
 	lineF2->x1 = min_x - 1;
 	lineF2->y1 = max_y;
 
-	addPrim((u_long*)(current->ot + 1), lineF2);
+	addPrim(current->ot + 1, lineF2);
 	current->primptr += sizeof(LINE_F2);
 
 	TransparencyOn(current->ot + 1, 0x20);

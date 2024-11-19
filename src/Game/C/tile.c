@@ -51,8 +51,8 @@ void Tile1x1(MODEL *model)
 		{
 			prims = (POLY_FT4*)plotContext.primptr;
 
+			*(uint*)&prims->r0 = plotContext.colour;
 			setPolyFT4(prims);
-			*(ulong*)&prims->r0 = plotContext.colour;
 
 			// retrieve first three verts
 			gte_stsxy3(&prims->x0, &prims->x1, &prims->x2);
@@ -309,7 +309,7 @@ void drawMesh(MVERTEX(*VSP)[5][5], int m, int n, _pct *pc)
 	for (int index = 0; index < numPolys; index++)
 	{
 		setPolyFT4(prim);
-		*(ulong*)&prim->r0 = pc->colour; // FIXME: semiTransparency support
+		*(uint*)&prim->r0 = pc->colour; // FIXME: semiTransparency support
 
 		// test
 		gte_ldv3(&(*VSP)[index][0], &(*VSP)[index][1], &(*VSP)[index][2]);

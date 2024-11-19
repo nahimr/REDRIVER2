@@ -418,8 +418,8 @@ void DrawFadePoly(void)
 	setRGB2(fl_g4, fadeVal, fadeVal, fadeVal);
 	setRGB3(fl_g4, fadeVal, fadeVal, fadeVal);
 
-	addPrim(&current->ot[1], fl_g4);
-	addPrim(&current->ot[1], &fade_gt4[current->id]);
+	addPrim(current->ot + 1, fl_g4);
+	addPrim(current->ot + 1, &fade_gt4[current->id]);
 }
 
 // [D] [T]

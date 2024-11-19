@@ -279,6 +279,17 @@ void State_GameStart(void* param)
 			SetState(STATE_GAMELAUNCH);
 		
 			break;
+		case GAME_DEMOLITION:
+			GameType = GAME_DEMOLITION;
+			if (NumPlayers == 1)
+				gCurrentMissionNumber = 50;
+			else
+				gCurrentMissionNumber = 58;
+
+			gCurrentMissionNumber += GameLevel * 2 + gWantNight + gSubGameNumber * 440;
+
+			SetState(STATE_GAMELAUNCH);
+			break;
 	}
 
 #ifdef DISCORD_SUPPORT

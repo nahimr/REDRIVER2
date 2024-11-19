@@ -372,7 +372,7 @@ void GlobalTimeStep(void)
 		// without precision
 		if (!cp->hd.mayBeColliding)
 		{
-			long* orient = st->n.orientation;	// LONGQUATERNION
+			int* orient = st->n.orientation;	// LONGQUATERNION
 
 			st->n.fposition[0] += st->n.linearVelocity[0] >> 8;
 			st->n.fposition[1] += st->n.linearVelocity[1] >> 8;
@@ -429,7 +429,7 @@ void GlobalTimeStep(void)
 						thisDelta = _d1;
 					}
 
-					long* orient = thisState_i->n.orientation;	// LONGQUATERNION
+					int* orient = thisState_i->n.orientation;	// LONGQUATERNION
 
 					thisDelta[i].n.fposition[0] = thisState_i->n.linearVelocity[0] >> 8;
 					thisDelta[i].n.fposition[1] = thisState_i->n.linearVelocity[1] >> 8;

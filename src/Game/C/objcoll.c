@@ -53,7 +53,7 @@ char CellEmpty(VECTOR *pPosition, int radius)
 		{
 			QuickUnpackCellObject(ppco, &ci.nearCell, &tempCO);
 
-			num_cb = *(int*)pModel->collision_block;
+			num_cb = *(s_int64_t*)pModel->collision_block;
 
 			xd = (tempCO.pos.vx - pPosition->vx);
 			zd = (tempCO.pos.vz - pPosition->vz);

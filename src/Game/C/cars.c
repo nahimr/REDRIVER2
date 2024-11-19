@@ -1077,9 +1077,9 @@ void MangleWheelModels(void)
 			m = gCleanWheelModelPtr;
 
 		// do some fuckery swaps
-		src = (POLYFT4*)m->poly_block;
+		src = (POLYFT4*)m->poly_block; // Pointer is 64 bits
 		
-		v0 = *(u_int *)&src[2].v0;
+		v0 = *(u_int *)&src[2].v0; // TODO: Might check this bs (was u_int*)
 		v1 = *(u_int *)&src[2].uv0;
 		v2 = *(u_int *)&src[2].uv2;
 		*(u_int *)src = *(u_int *)(src + 2);

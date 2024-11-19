@@ -62,6 +62,8 @@ struct COLLISION_PACKET
 	short xsize, ysize, zsize;
 };
 
+static_assert(sizeof(COLLISION_PACKET) == 20, "COLLISION_PACKET must be 20 bytes length");
+
 struct SHADOWHDR
 {
 	u_int num_common_verts;
@@ -155,11 +157,15 @@ struct MODEL
 	u_short num_point_normals;
 	u_short num_vertices;
 	u_short num_polys;
-	int vertices;
-	int poly_block;
-	int normals;
-	int point_normals;
-	int collision_block;
+
+	/*
+	 * Offsets
+	 */
+	s_int64_t vertices; // Referenced as pointer
+	s_int64_t poly_block; // Referenced as pointer
+	s_int64_t normals; // Referenced as pointer
+	s_int64_t point_normals; // Referenced as pointer
+	s_int64_t collision_block; // Referenced as pointer
 
 	SVECTOR* pVertex(int i) const
 	{
@@ -178,9 +184,56 @@ struct MODEL
 
 	char* pPolyAt(int ofs) const
 	{
-		return (char *)(((u_char *)this) + poly_block + ofs);		
+		return (char *)((u_char *)this + poly_block + ofs);		
 	}
 };
 
+struct LOADED_MODEL
+{
+	u_short shape_flags;
+	u_short flags2;
+	short instance_number;
+	u_char tri_verts;
+	unsigned char zBias;
+	short bounding_sphere;
+	u_short num_point_normals;
+	u_short num_vertices;
+	u_short num_polys;
+
+	/*
+	 * Offsets
+	 */
+	 int vertices; // Referenced as pointer
+	 int poly_block; // Referenced as pointer
+	 int normals; // Referenced as pointer
+	 int point_normals; // Referenced as pointer
+	 int collision_block; // Referenced as pointer
+};
+
+struct TOP_MODEL
+{
+	u_short shape_flags;
+	u_short flags2;
+	short instance_number;
+	u_char tri_verts;
+	unsigned char zBias;
+	short bounding_sphere;
+	u_short num_point_normals;
+	u_short num_vertices;
+	u_short num_polys;
+};
+
+static_assert(sizeof(TOP_MODEL) == 16, "TOP_MODEL needs to be 16 bytes length !");
+
+struct OFFSET_MODEL
+{
+	int vertices;
+	int poly_block;
+	int normals;
+	int point_normals;
+	int collision_block;
+};
+
+static_assert(sizeof(LOADED_MODEL) == 36, "LOADED_MODEL should be 36 bytes");
 
 #endif // MDL_H

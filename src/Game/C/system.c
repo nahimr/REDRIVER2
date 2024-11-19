@@ -58,7 +58,7 @@ volatile char* _replay_buffer = NULL;		// 0x1FABBC
 
 #if defined(USE_CRT_MALLOC)
 
-char* mallocptr = NULL;
+volatile char* mallocptr = NULL;
 volatile char* malloctab = NULL;
 
 void* g_dynamicAllocs[1024] = { 0 };
@@ -795,17 +795,17 @@ void SetupDrawBufferData(int num_players)
 	{
 		for (j = 0; j < num_players; j++)
 		{
-			u_long* otpt;
+			u_int* otpt;
 			u_char* primpt;
 
 			if (toggle)
 			{
-				otpt = (u_long*)_OT2;
+				otpt = (u_int*)_OT2;
 				primpt = (u_char*)_primTab2; // _primTab1 + PRIMTAB_SIZE
 			}
 			else
 			{
-				otpt = (u_long*)_OT1;
+				otpt = (u_int*)_OT1;
 				primpt = (u_char*)_primTab1;
 			}
 
