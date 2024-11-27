@@ -680,15 +680,14 @@ void CheckScenaryCollisions(CAR_DATA *cp)
 		model = modelpointers[cop->type];
 		num_cb = *(int*)model->collision_block;	// box count
 
-		if ((uint)model->collision_block > 0 /*&&
+		if ((uint)model->collision_block > 0 &&/*
 			model->num_vertices - 3 < 300 &&
 			model->num_point_normals < 300 &&
-			model->num_polys < 300*/ &&
+			model->num_polys < 300 &&*/
 			num_cb > 0)
 		{
 			dx = cop->pos.vx - player_pos.vx;
 			dz = cop->pos.vz - player_pos.vz;
-					
 			sphereSq = model->bounding_sphere + extraDist + cp->hd.speed;
 
 			if (dx * dx + dz * dz < sphereSq * sphereSq)

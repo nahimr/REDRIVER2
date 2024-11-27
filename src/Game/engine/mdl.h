@@ -203,11 +203,11 @@ struct LOADED_MODEL
 	/*
 	 * Offsets
 	 */
-	 int vertices; // Referenced as pointer
-	 int poly_block; // Referenced as pointer
-	 int normals; // Referenced as pointer
-	 int point_normals; // Referenced as pointer
-	 int collision_block; // Referenced as pointer
+	int vertices; // Referenced as pointer
+	int poly_block; // Referenced as pointer
+	int normals; // Referenced as pointer
+	int point_normals; // Referenced as pointer
+	int collision_block; // Referenced as pointer
 };
 
 struct TOP_MODEL
@@ -234,6 +234,7 @@ struct OFFSET_MODEL
 	int collision_block;
 };
 
+static_assert(sizeof(OFFSET_MODEL) == 20, "OFFSET_MODEL should be 20 bytes");
 static_assert(sizeof(LOADED_MODEL) == 36, "LOADED_MODEL should be 36 bytes");
 
 #endif // MDL_H

@@ -638,8 +638,6 @@ void init_spooled_models(void)
 	int model_number;
 	MODEL *parentmodel;
 	char *addr;
-	TOP_MODEL* top_mdl;
-	OFFSET_MODEL* offs_mdl;
 	MODEL* _mdl;
 
 	int i;
@@ -659,16 +657,25 @@ void init_spooled_models(void)
 		model_number = new_model_numbers[i];
 
 		size = *(int *)addr;
-
 		_mdl = (MODEL*)(addr + 4);
-		top_mdl = (TOP_MODEL*)(addr + 4);
-		offs_mdl = (OFFSET_MODEL*)((char*)top_mdl + sizeof(TOP_MODEL));
 
-		_mdl->vertices = offs_mdl->vertices;
-		_mdl->poly_block = offs_mdl->poly_block;
-		_mdl->normals = offs_mdl->normals;
-		_mdl->point_normals = offs_mdl->point_normals;
-		_mdl->collision_block = offs_mdl->collision_block;
+		#ifdef WIN64
+
+		LOADED_MODEL* lmodel = (LOADED_MODEL*)(addr + 4);
+
+		s_int64_t vertices = lmodel->vertices;
+		s_int64_t normals = lmodel->normals;
+		s_int64_t poly_block = lmodel->poly_block;
+		s_int64_t point_normals = lmodel->point_normals;
+		s_int64_t collision_block = lmodel->collision_block;
+
+		_mdl->vertices = vertices;
+		_mdl->normals = normals;
+		_mdl->poly_block = poly_block;
+		_mdl->point_normals = point_normals;
+		_mdl->collision_block = collision_block;
+
+		#endif
 
 		lod = Low2LowerDetailTable[model_number];
 

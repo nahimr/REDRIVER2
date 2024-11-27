@@ -555,11 +555,11 @@ void DrawAllTheCars(int view)
 		while (i < num_cars_to_draw)
 		{
 			// Don't exceed draw buffers
-			if ((int)(current->primtab + (-3000 - (int)(current->primptr - PRIMTAB_SIZE))) < 5800)
+			if ((s_int64_t)(current->primtab + (-3000 - (s_int64_t)(current->primptr - PRIMTAB_SIZE))) < 5800)
 				return;
 
 			// make cars look uglier
-			if ((int)(current->primtab + (-3000 - (int)(current->primptr - PRIMTAB_SIZE)) - spacefree) < 5800)
+			if ((s_int64_t)(current->primtab + (-3000 - (s_int64_t)(current->primptr - PRIMTAB_SIZE)) - spacefree) < 5800)
 				gForceLowDetailCars = 1;
 
 			if (cars_to_draw[i]->controlType == CONTROL_TYPE_PLAYER)
@@ -998,7 +998,7 @@ int DrawAllBuildings(CELL_OBJECT** objects, int num_buildings)
 		else
 			PlotBuildingModel(model, cop->yang, &plotContext);
 
-		drawlimit = (int)current->primptr - (int)current->primtab;
+		drawlimit = (s_int64_t)current->primptr - (s_int64_t)current->primtab;
 
 		if (PRIMTAB_SIZE - drawlimit < 60000)
 			break;

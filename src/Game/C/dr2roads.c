@@ -405,7 +405,7 @@ sdPlane* sdGetCell(VECTOR *pos)
 
 		plane = &planeData[*surface];
 
-		if (((int)plane & 3) == 0 && *(int *)plane != -1) 
+		if (((s_int64_t)plane & 3) == 0 && *(int *)plane != -1)
 		{
 			if (plane->surface - 16U < 16)
 				plane = EventSurface(pos, plane);

@@ -24,6 +24,8 @@ struct _EVENT
 	EVENT* next;
 };
 
+// static_assert(sizeof(_EVENT) == 40, "EVENT must be 40 bytes");
+
 struct EventGlobal
 {
 	int camera;

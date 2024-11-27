@@ -23,7 +23,7 @@
 #if defined(WIN32)
 typedef int32_t s_int64_t;
 #elif defined(WIN64)
-typedef unsigned long long s_int64_t;
+typedef long long s_int64_t;
 #endif
 #elif defined(__GNUC__)
     // GCC or Clang compiler settings

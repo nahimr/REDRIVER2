@@ -80,17 +80,24 @@ void ProcessMDSLump(char* lump_file, int lump_size)
 		{
 			// add the usage bit
 			staticModelSlotBitfield[i >> 5] |= 1 << (i & 31);
-			TOP_MODEL* mdl = (TOP_MODEL*)mdsfile;
 
 			model = (MODEL*)mdsfile;
 
-			OFFSET_MODEL* offs = (OFFSET_MODEL*)((char*)mdl + sizeof(TOP_MODEL));
+			#ifdef WIN64
 
-			model->vertices = offs->vertices;
-			model->normals = offs->normals;
-			model->poly_block = offs->poly_block;
-			model->point_normals = offs->point_normals;
-			model->collision_block = offs->collision_block;
+			s_int64_t vertices = ((LOADED_MODEL*)mdsfile)->vertices;
+			s_int64_t normals = ((LOADED_MODEL*)mdsfile)->normals;
+			s_int64_t poly_block = ((LOADED_MODEL*)mdsfile)->poly_block;
+			s_int64_t point_normals = ((LOADED_MODEL*)mdsfile)->point_normals;
+			s_int64_t collision_block = ((LOADED_MODEL*)mdsfile)->collision_block;
+
+			model->vertices = vertices;
+			model->normals = normals;
+			model->poly_block = poly_block;
+			model->point_normals = point_normals;
+			model->collision_block = collision_block;
+
+			#endif
 
 			modelpointers[i] = model;
 		}
@@ -142,7 +149,6 @@ int ProcessCarModelLump(char* lump_ptr, int lump_size)
 	int size;
 	int* offsets;
 	char* models_offset;
-
 
 	MODEL* model;
 	int model_number;
@@ -264,7 +270,6 @@ int ProcessCarModelLump(char* lump_ptr, int lump_size)
 	return 0;
 }
 
-
 char* CarModelTypeNames[] = {
 	"CLEAN",
 	"DAMAGED",
@@ -297,8 +302,6 @@ char* LoadCarModelFromFile(char* dest, int modelNumber, int type)
 MODEL* GetCarModel(char* src, char** dest, int KeepNormals, int modelNumber, int type)
 {
 	int size;
-	TOP_MODEL* top_mdl;
-	OFFSET_MODEL* offs_mdl;
 	MODEL* model;
 	char* mem;
 
@@ -312,8 +315,8 @@ MODEL* GetCarModel(char* src, char** dest, int KeepNormals, int modelNumber, int
 #endif
 
 	model = (MODEL*)*dest;
-	top_mdl = (TOP_MODEL*)*dest;
-	offs_mdl = (OFFSET_MODEL*)((char*)top_mdl + sizeof(TOP_MODEL));
+
+	LOADED_MODEL* lmodel = (LOADED_MODEL*)*dest;
 
 	if (KeepNormals == 0)
 	{
@@ -328,21 +331,27 @@ MODEL* GetCarModel(char* src, char** dest, int KeepNormals, int modelNumber, int
 	memcpy((u_char*)*dest, (u_char*)mem, size);
 
 	if (KeepNormals == 0)
-		size = offs_mdl->normals;
+		size = lmodel->normals;
 	else
-		size = offs_mdl->poly_block;
+		size = lmodel->poly_block;
 
-	//*dest += size + 2;
+	// *dest += size + 2;
 	// *dest = (char*)((int)model + size + 3 & 0xfffffffc); // 32 bits
 	// *dest = (char*)((unsigned long long)model + size + 3L & 0xfffffffffffffffc); // 64 bits
 	*dest = (char*)((s_int64_t)model + size + 3 & ~3); // [A] 64 and 32 bits
 
+	s_int64_t vertices = lmodel->vertices;
+	s_int64_t normals = lmodel->normals;
+	s_int64_t poly_block = lmodel->poly_block;
+	s_int64_t point_normals = lmodel->point_normals;
+	s_int64_t collision_block = lmodel->collision_block;
+
 	// Set values to 64bits
-	model->vertices = offs_mdl->vertices;
-	model->poly_block = offs_mdl->poly_block;
-	model->normals = offs_mdl->normals;
-	model->point_normals = offs_mdl->point_normals;
-	model->collision_block = offs_mdl->collision_block;
+	model->vertices = vertices;
+	model->poly_block = poly_block;
+	model->normals = normals;
+	model->point_normals = point_normals;
+	model->collision_block = collision_block;
 
 	model->vertices += (s_int64_t)model;
 	model->normals += (s_int64_t)model;
@@ -364,7 +373,6 @@ MODEL* FindModelPtrWithName(char* name)
 
 	return idx >= 0 ? modelpointers[idx] : NULL;
 }
-
 
 // [D] [T]
 int FindModelIdxWithName(char* name)
